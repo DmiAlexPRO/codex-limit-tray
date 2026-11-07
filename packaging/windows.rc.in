@@ -1,0 +1,28 @@
+1 ICON "app.ico"
+1 VERSIONINFO
+FILEVERSION @NUMERIC_VERSION@
+PRODUCTVERSION @NUMERIC_VERSION@
+FILEFLAGSMASK 0x3fL
+FILEFLAGS 0
+FILEOS 0x40004L
+FILETYPE 1
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "CompanyName", "Codex Limit Tray contributors\0"
+            VALUE "FileDescription", "Codex Limit Tray\0"
+            VALUE "FileVersion", "@VERSION@\0"
+            VALUE "InternalName", "CodexLimitTray\0"
+            VALUE "LegalCopyright", "Codex Limit Tray contributors\0"
+            VALUE "OriginalFilename", "CodexLimitTray.exe\0"
+            VALUE "ProductName", "Codex Limit Tray\0"
+            VALUE "ProductVersion", "@VERSION@\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0409, 1200
+    END
+END

@@ -1,0 +1,128 @@
+name: Build, test and release
+
+on: [push, pull_request, workflow_dispatch]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-2025
+            target: windows-x64
+          - os: macos-15
+            target: macOS-arm64
+          - os: macos-15-intel
+            target: macOS-x86_64
+    runs-on: ${{ matrix.os }}
+    env:
+      UPDATE_REPOSITORY: ${{ github.repository }}
+      UPDATE_PUBLIC_KEY: ${{ vars.UPDATE_PUBLIC_KEY }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+      - name: Select build version
+        shell: bash
+        run: |
+          if [[ -z "$UPDATE_PUBLIC_KEY" ]]; then UPDATE_PUBLIC_KEY=$(tr -d '\r\n' < packaging/update-public-key.txt); fi
+          [[ "$UPDATE_PUBLIC_KEY" =~ ^[A-Za-z0-9+/]{43}=$ ]] || { echo 'Invalid update public key'; exit 1; }
+          echo "UPDATE_PUBLIC_KEY=$UPDATE_PUBLIC_KEY" >> "$GITHUB_ENV"
+          version=3.0.0-preview
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            version="${GITHUB_REF_NAME#v}"
+            [[ "$version" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-[A-Za-z0-9]+([.-][A-Za-z0-9]+)*)?$ ]] || { echo 'Invalid release tag'; exit 1; }
+            if [[ "$version" == *-* ]]; then
+              IFS=. read -ra ids <<< "${version#*-}"
+              for id in "${ids[@]}"; do [[ ! "$id" =~ ^0[0-9]+$ ]] || { echo 'Invalid numeric prerelease identifier'; exit 1; }; done
+            fi
+          fi
+          echo "APP_VERSION=$version" >> "$GITHUB_ENV"
+      - uses: msys2/setup-msys2@ec48f7c5447b3140e2b088413ae3a55687bccb6e # v2.33.0
+        if: runner.os == 'Windows'
+        with:
+          msystem: UCRT64
+          path-type: inherit
+          install: mingw-w64-ucrt-x86_64-gcc
+      - name: Get pinned portable installer compiler
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: ./scripts/get-inno.ps1
+      - name: Build and test Windows installer and ZIP
+        if: runner.os == 'Windows'
+        shell: msys2 {0}
+        run: pwsh.exe -NoProfile -Command './build.ps1 -Installer -Version $env:APP_VERSION -Repository $env:UPDATE_REPOSITORY -PublicKey $env:UPDATE_PUBLIC_KEY'
+      - name: Check installer lifecycle on disposable runner
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: ./scripts/test-installer.ps1
+      - name: Build and test macOS ZIP
+        if: runner.os == 'macOS'
+        run: sh scripts/build-macos.sh
+      - name: Stage exactly the expected assets
+        shell: bash
+        env:
+          TARGET: ${{ matrix.target }}
+        run: |
+          mkdir upload
+          cp "dist/CodexLimitTray-$TARGET.zip" upload/
+          if [[ "$RUNNER_OS" == Windows ]]; then
+            cp dist/CodexLimitTray-windows-x64-Setup.exe upload/
+            printf '%s' "$UPDATE_PUBLIC_KEY" > upload/update-public-key.txt
+          fi
+          cp dist/SHA256SUMS upload/
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: CodexLimitTray-${{ matrix.target }}
+          path: upload/
+          if-no-files-found: error
+
+  publish:
+    needs: build
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+          cache: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          pattern: CodexLimitTray-*
+          path: artifacts
+      - name: Sign Windows update and generate combined checksums
+        env:
+          UPDATE_SIGNING_SEED: ${{ secrets.UPDATE_SIGNING_SEED }}
+          UPDATE_PUBLIC_KEY: ${{ vars.UPDATE_PUBLIC_KEY }}
+        run: |
+          if [[ -z "$UPDATE_PUBLIC_KEY" ]]; then export UPDATE_PUBLIC_KEY=$(tr -d '\r\n' < packaging/update-public-key.txt); fi
+          mkdir release
+          [[ -n "$UPDATE_PUBLIC_KEY" && "$UPDATE_PUBLIC_KEY" == "$(cat artifacts/CodexLimitTray-windows-x64/update-public-key.txt)" ]] || { echo 'Signing key configuration differs from the key embedded at build time'; exit 1; }
+          for target in windows-x64 macOS-arm64 macOS-x86_64; do
+            cp "artifacts/CodexLimitTray-$target/CodexLimitTray-$target.zip" release/
+          done
+          cp artifacts/CodexLimitTray-windows-x64/CodexLimitTray-windows-x64-Setup.exe release/
+          go run ./cmd/sign-update -asset release/CodexLimitTray-windows-x64-Setup.exe -version "${GITHUB_REF_NAME#v}"
+          cd release
+          sha256sum CodexLimitTray-* > SHA256SUMS
+      - name: Publish a tagged GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          flags=()
+          if [[ "$GITHUB_REF_NAME" == *-* ]]; then flags+=(--prerelease); fi
+          notes="docs/releases/$GITHUB_REF_NAME.md"
+          if [[ -f "$notes" ]]; then flags+=(--notes-file "$notes"); else flags+=(--generate-notes); fi
+          gh release create "$GITHUB_REF_NAME" --verify-tag --title "$GITHUB_REF_NAME" "${flags[@]}" release/*
