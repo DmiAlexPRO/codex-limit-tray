@@ -15,8 +15,11 @@ $root=$PSScriptRoot
 Set-Location $root
 $localGo=Join-Path $root '.tools\go\bin'
 if (Test-Path -LiteralPath (Join-Path $localGo 'go.exe')) { $env:PATH="$localGo;$env:PATH" }
-$env:GOMODCACHE=Join-Path $root '.cache\modules'
-$env:GOCACHE=Join-Path $root '.cache\build'
+# On GitHub-hosted runners setup-go restores and saves the standard Go caches.
+if ($env:GITHUB_ACTIONS -ne 'true') {
+    $env:GOMODCACHE=Join-Path $root '.cache\modules'
+    $env:GOCACHE=Join-Path $root '.cache\build'
+}
 $compiler=Join-Path $root '.tools\w64devkit\bin\gcc.exe'
 if (Test-Path -LiteralPath $compiler) {
     $env:CC='gcc'
@@ -25,9 +28,9 @@ if (Test-Path -LiteralPath $compiler) {
 $env:CGO_ENABLED='1'
 if ($Preview) { $env:CODEX_LIMIT_PREVIEW='1' }
 New-Item -ItemType Directory -Force (Join-Path $root 'dist') | Out-Null
-go test ./...
+go test -trimpath ./...
 if ($LASTEXITCODE -ne 0) { throw 'Tests failed.' }
-go vet ./...
+go vet -trimpath ./...
 if ($LASTEXITCODE -ne 0) { throw 'Vet failed.' }
 $flags="-H=windowsgui -s -w -X codexlimittray/internal/update.Version=$Version -X codexlimittray/internal/update.Repository=$Repository -X codexlimittray/internal/update.PublicKey=$PublicKey"
 $fileVersion=($Version -split '-')[0]

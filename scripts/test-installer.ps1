@@ -44,7 +44,7 @@ function Test-Uninstall([string]$ExpectedCommand, [string]$LogName) {
     # Inno's original EXE exits before its temporary second-phase process finishes.
     $deadline=[DateTime]::UtcNow.AddSeconds(30)
     do {
-        $actual=Get-ItemPropertyValue -LiteralPath $runKey -Name CodexLimitTray -ErrorAction SilentlyContinue
+        $actual=[Microsoft.Win32.Registry]::GetValue('HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run', 'CodexLimitTray', $null)
         if (-not (Test-Path -LiteralPath $folder) -and [string]$actual -ceq $ExpectedCommand) { return }
         Start-Sleep -Milliseconds 200
     } while ([DateTime]::UtcNow -lt $deadline)
