@@ -1,6 +1,7 @@
 # Destructive installation/upgrade/uninstallation smoke test for a disposable GitHub VM only.
 $ErrorActionPreference='Stop'
 if ($env:GITHUB_ACTIONS -ne 'true' -or $env:RUNNER_ENVIRONMENT -ne 'github-hosted') { throw 'Disposable GitHub-hosted runner required.' }
+if (-not [Environment]::Is64BitProcess) { throw 'The x64 app and this smoke test must use the native registry view.' }
 # Do not let MinGW/MSYS DLLs on the build VM's PATH mask missing runtime dependencies in the installer.
 $env:Path="$env:SystemRoot\System32;$env:SystemRoot;$env:SystemRoot\System32\WindowsPowerShell\v1.0"
 $setup=(Resolve-Path "$PSScriptRoot\..\dist\CodexLimitTray-windows-x64-Setup.exe").Path
@@ -37,9 +38,24 @@ $launched | Stop-Process
 $launched | Wait-Process -ErrorAction SilentlyContinue
 if (-not (Test-Path $runKey)) { New-Item -Path $runKey | Out-Null }
 New-ItemProperty -LiteralPath $runKey -Name CodexLimitTray -Value ('"' + $app + '" --minimized') -PropertyType String -Force | Out-Null
-Invoke-Installer (Join-Path $folder 'unins000.exe') $quiet
-$deadline=[DateTime]::UtcNow.AddSeconds(10)
-while ((Test-Path -LiteralPath $app) -and [DateTime]::UtcNow -lt $deadline) { Start-Sleep -Milliseconds 200 }
-if (Test-Path -LiteralPath $app) { throw 'Uninstall left the executable behind.' }
-if (Get-ItemPropertyValue -LiteralPath $runKey -Name CodexLimitTray -ErrorAction SilentlyContinue) { throw 'Uninstall left a stale autostart command.' }
+function Test-Uninstall([string]$ExpectedCommand, [string]$LogName) {
+    $log=Join-Path $env:RUNNER_TEMP $LogName
+    Invoke-Installer (Join-Path $folder 'unins000.exe') ($quiet + ('/LOG="' + $log + '"'))
+    # Inno's original EXE exits before its temporary second-phase process finishes.
+    $deadline=[DateTime]::UtcNow.AddSeconds(30)
+    do {
+        $actual=Get-ItemPropertyValue -LiteralPath $runKey -Name CodexLimitTray -ErrorAction SilentlyContinue
+        if (-not (Test-Path -LiteralPath $folder) -and [string]$actual -ceq $ExpectedCommand) { return }
+        Start-Sleep -Milliseconds 200
+    } while ([DateTime]::UtcNow -lt $deadline)
+    if (Test-Path -LiteralPath $log) { Get-Content -LiteralPath $log -Tail 40 }
+    throw "Incomplete uninstall: directory exists=$(Test-Path -LiteralPath $folder), actual Run='$actual', expected='$ExpectedCommand'."
+}
+Test-Uninstall '' 'uninstall-owned.log'
+# The same registry value may subsequently point at a portable copy. Uninstall must leave it alone.
+Invoke-Installer $setup $quiet
+$portable='"' + (Join-Path $env:RUNNER_TEMP 'portable\CodexLimitTray.exe') + '" --minimized'
+Set-ItemProperty -LiteralPath $runKey -Name CodexLimitTray -Value $portable
+Test-Uninstall $portable 'uninstall-portable.log'
+Remove-ItemProperty -LiteralPath $runKey -Name CodexLimitTray
 if ((Get-FileHash -LiteralPath $config).Hash -ne $configHash) { throw 'Installer lifecycle changed the user settings.' }

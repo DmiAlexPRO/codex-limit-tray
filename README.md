@@ -4,7 +4,7 @@
 
 **See how much Codex quota you have left without leaving your work.** The tray icon shows your remaining allowance; open it to see when your five-hour and weekly limits reset, or keep a small widget above your windows.
 
-**[Download Windows Preview · x64 installer](https://github.com/DmiAlexPRO/codex-limit-tray/releases/download/v3.0.0-preview.1/CodexLimitTray-windows-x64-Setup.exe)** · [All releases and portable downloads](https://github.com/DmiAlexPRO/codex-limit-tray/releases)
+**[Download for Windows · x64 installer](https://github.com/DmiAlexPRO/codex-limit-tray/releases/latest/download/CodexLimitTray-windows-x64-Setup.exe)** · [All releases and portable downloads](https://github.com/DmiAlexPRO/codex-limit-tray/releases)
 
 Free under the [MIT License](LICENSE). The app interface is in **Russian**. Requires a local Codex installation signed in to a supported ChatGPT subscription. This independent project is not affiliated with OpenAI; it shows **Codex subscription quotas**, not general ChatGPT limits or API spending.
 
@@ -13,16 +13,16 @@ Free under the [MIT License](LICENSE). The app interface is in **Russian**. Requ
 ## Start on Windows
 
 1. Install Codex and sign in through Codex desktop or `codex login`. There are no extra accounts or API keys for the tray app.
-2. Download and run **CodexLimitTray-windows-x64-Setup.exe**. It installs for your Windows user, without administrator privileges. The preview does **not** have an Authenticode publisher signature; Windows may show a SmartScreen warning. Get the installer only from this repository's releases.
+2. Download and run **CodexLimitTray-windows-x64-Setup.exe**. It installs for your Windows user, without administrator privileges. The installer does **not** have an Authenticode publisher signature; Windows may show a SmartScreen warning. Get the installer only from this repository's releases.
 3. Open **Codex Limit Tray**. Close its window to leave the icon in the tray; click the icon to bring the window back. If Codex isn't found, open the gear → **Подключение** (Connection) and enter the full path to the trusted Codex executable.
 
-The download above targets **v3.0.0-preview.1**. If it shows “Not Found”, check the [releases page](https://github.com/DmiAlexPRO/codex-limit-tray/releases) for published builds; a tag alone is not an installer.
+The download button follows the latest **stable Windows release**, not previews. See the [3.0.0 release notes](docs/releases/v3.0.0.md) for the update policy and platform limits.
 
 ## Which download should I use?
 
 | Edition | Choose it if… | How it updates |
 | --- | --- | --- |
-| **Windows x64 · Setup** | You want a Start menu entry and updates without reinstalling by hand. | Checks GitHub at startup by default; verifies a newer installer, installs it and restarts in the tray. You can switch to manual checks. |
+| **Windows x64 · Setup** | You want a Start menu entry and updates without reinstalling by hand. | The stable edition checks for stable releases at startup by default; verifies a newer installer, installs it and restarts in the tray. You can switch to manual checks. |
 | **Windows x64 · portable ZIP** | You want to run the EXE from a folder without installing. | No automatic check or installation. Replace the portable copy yourself, or explicitly choose to install the normal edition. Your settings carry over. |
 | **macOS · experimental** | You want to try the app on Apple Silicon (`arm64`) or Intel (`x86_64`). Choose the matching ZIP when available. | Unzip the `.app` and install or replace it manually. In-app checks show release notes only. Bundles are unsigned and not notarized; real-hardware acceptance is pending. |
 

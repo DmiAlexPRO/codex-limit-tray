@@ -83,14 +83,27 @@ begin
 end;
 
 procedure CurUninstallStepChanged(Step: TUninstallStep);
-var Command, Exe: String;
+var Command, Exe, LegacyExe: String;
 begin
-  if Step <> usPostUninstall then Exit;
-  if not RegQueryStringValue(HKEY_CURRENT_USER, 'Software\Microsoft\Windows\CurrentVersion\Run', 'CodexLimitTray', Command) then Exit;
+  if Step <> usUninstall then Exit;
+  { Only clean this user's native x64 Run entry, never one belonging to a portable copy. }
+  if not RegQueryStringValue(HKCU64, 'Software\Microsoft\Windows\CurrentVersion\Run', 'CodexLimitTray', Command) then Exit;
   Exe := ExpandConstant('{app}\CodexLimitTray.exe');
-  { Older builds used Go string quoting and doubled the backslashes. }
-  StringChangeEx(Command, '\\', '\', True);
-  if (CompareText(Command, '"' + Exe + '" --minimized') = 0) or
-     (CompareText(Command, Exe + ' --minimized') = 0) then
-    RegDeleteValue(HKEY_CURRENT_USER, 'Software\Microsoft\Windows\CurrentVersion\Run', 'CodexLimitTray');
+  if CompareText(Copy(Exe, 1, 8), '\\?\UNC\') = 0 then
+    Exe := '\\' + Copy(Exe, 9, Length(Exe))
+  else if Copy(Exe, 1, 4) = '\\?\' then
+    Delete(Exe, 1, 4);
+  { Compare the old Go-quoted spelling separately: do not collapse UNC paths. }
+  LegacyExe := Exe;
+  StringChangeEx(LegacyExe, '\', '\\', True);
+  if (CompareText(Command, '"' + Exe + '" --minimized') <> 0) and
+     (CompareText(Command, Exe + ' --minimized') <> 0) and
+     (CompareText(Command, '"' + LegacyExe + '" --minimized') <> 0) then begin
+    Log('Keeping autostart: the Run command belongs to a different installation.');
+    Exit;
+  end;
+  if RegDeleteValue(HKCU64, 'Software\Microsoft\Windows\CurrentVersion\Run', 'CodexLimitTray') then
+    Log('Removed installed application autostart.')
+  else
+    Log('Could not remove installed application autostart.');
 end;
