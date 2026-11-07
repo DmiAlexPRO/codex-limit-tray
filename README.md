@@ -8,6 +8,10 @@
 
 Free under the [MIT License](LICENSE). The app interface is in **Russian**. Requires a local Codex installation signed in to a supported ChatGPT subscription. This independent project is not affiliated with OpenAI; it shows **Codex subscription quotas**, not general ChatGPT limits or API spending.
 
+![Four tray icon styles — numbers, bars, segments and rings — with sample quotas: 82% remaining in the five-hour window and 57% in the weekly window.](docs/images/tray-modes.png)
+
+To change the tray icon, open the gear → **Оформление → Значок** (Appearance → Icon) and choose **Цифры** (numbers), **Бары** (bars), **Сегменты** (segments) or **Кольца** (rings).
+
 ![The main window shows 82% remaining for five hours and 57% for the week, with reset times for each. Sample data.](docs/images/main-dark.png)
 
 ## Start on Windows
