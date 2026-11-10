@@ -20,7 +20,7 @@ To change the tray icon, open the gear → **Appearance → Icon** and choose **
 2. Download and run **CodexLimitTray-windows-x64-Setup.exe**. It installs for your Windows user, without administrator privileges. The installer does **not** have an Authenticode publisher signature; Windows may show a SmartScreen warning. Get the installer only from this repository's releases.
 3. Open **Codex Limit Tray**. Close its window to leave the icon in the tray; click the icon to bring the window back. If Codex isn't found, open the gear → **Connection** and enter the full path to the trusted Codex executable.
 
-The download button follows the latest **stable Windows release**, not previews. See the [3.0.0 release notes](docs/releases/v3.0.0.md) for the update policy and platform limits.
+The download button follows the latest **stable Windows release**, not previews. See the [3.0.1 release notes](docs/releases/v3.0.1.md) for the update policy and platform limits.
 
 ## Which download should I use?
 

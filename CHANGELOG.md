@@ -2,6 +2,13 @@
 
 This file records user-facing changes. Release versions follow Semantic Versioning.
 
+## 3.0.1 — First release after the repository history cleanup
+
+- Rebuilt with an updated Go toolchain and updated security-sensitive dependencies.
+- The version increases from 3.0.0 so installed Windows copies can receive the signed update and keep their settings.
+
+See the [3.0.1 release notes](docs/releases/v3.0.1.md).
+
 ## 3.0.0 — Stable for Windows x64
 
 - 3.0.0 is the first GitHub release. The Windows edition follows stable releases, not prereleases. The primary download points to the latest stable installer.
