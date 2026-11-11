@@ -6,7 +6,6 @@ import (
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
-	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 )
@@ -27,7 +26,8 @@ type UpdateState struct {
 	Stage      UpdateStage
 	Version    string
 	Notes      string
-	Message    string
+	Message    string // technical detail, if available
+	MessageKey string
 	CanInstall bool
 }
 
@@ -45,12 +45,12 @@ type updatePanel struct {
 func (v *View) ConfigureUpdates(currentVersion string, installed bool, check, install func()) {
 	p := &updatePanel{status: wrapped(""), version: wrapped(""), notes: wrapped(""), installed: installed}
 	v.updates = p
-	p.check = widget.NewButtonWithIcon("Проверить обновления", theme.ViewRefreshIcon(), check)
-	p.install = highButton("Скачать и установить обновление", theme.DownloadIcon(), install)
+	p.check = widget.NewButtonWithIcon(v.tr("checkUpdates"), theme.ViewRefreshIcon(), check)
+	p.install = highButton(v.tr("installUpdate"), theme.DownloadIcon(), install)
 	if !installed {
-		p.install.SetText("Скачать и установить программу")
+		p.install.SetText(v.tr("installApp"))
 	}
-	p.automatic = widget.NewCheck("Автоматически устанавливать обновления при запуске", nil)
+	p.automatic = widget.NewCheck(v.tr("autoUpdate"), nil)
 	p.automatic.Checked = installed && v.settings.AutoUpdate
 	p.automatic.OnChanged = func(enabled bool) {
 		next := v.settings
@@ -58,21 +58,21 @@ func (v *View) ConfigureUpdates(currentVersion string, installed bool, check, in
 		if err := v.save(next); err != nil {
 			p.automatic.Checked = v.settings.AutoUpdate
 			p.automatic.Refresh()
-			dialog.ShowError(err, v.window)
+			v.showSaveError(err)
 			return
 		}
 		v.settings = next
 	}
-	note := "Если настройка включена, при запуске программа проверяет выпуски на GitHub и устанавливает новую версию с перезапуском."
+	note := v.tr("autoUpdateHint")
 	if !installed && runtime.GOOS == "windows" {
-		note = "Переносная версия ничего не устанавливает сама. Кнопка установки запускает установщик. В установленной версии автообновление по умолчанию включено."
+		note = v.tr("portableHint")
 	}
 	if runtime.GOOS != "windows" {
-		note = "Здесь можно проверить версию и прочитать изменения. Устанавливайте новые версии вручную из GitHub Releases."
+		note = v.tr("manualHint")
 	}
-	p.tab = container.NewTabItem("Обновления", container.NewVScroll(container.NewVBox(
-		text("Обновления приложения", 22, true),
-		wrapped("Текущая версия: "+currentVersion), p.version, p.status,
+	p.tab = container.NewTabItem(v.tr("updates"), container.NewVScroll(container.NewVBox(
+		text(v.tr("appUpdates"), 22, true),
+		wrapped(v.tr("currentVersion", currentVersion)), p.version, p.status,
 		p.install, p.check, widget.NewSeparator(), p.automatic, wrapped(note),
 		p.notes,
 	)))
@@ -95,27 +95,32 @@ func (v *View) SetUpdateState(s UpdateState) {
 	if p == nil {
 		return
 	}
-	message := s.Message
-	if message == "" {
+	message := ""
+	if s.MessageKey != "" {
+		message = v.tr(s.MessageKey)
+	} else {
 		switch s.Stage {
 		case UpdateChecking:
-			message = "Проверяем выпуски на GitHub…"
+			message = v.tr("checking")
 		case UpdateCurrent:
-			message = "У вас актуальная версия."
+			message = v.tr("current")
 		case UpdateAvailable:
-			message = "Доступна новая версия."
+			message = v.tr("available")
 		case UpdateInstalling:
-			message = "Подготавливаем установку. Программа перезапустится."
+			message = v.tr("installing")
 		case UpdateError:
-			message = "Не удалось обновить приложение. Попробуйте ещё раз."
+			message = v.tr("updateError")
 		default:
-			message = "Проверка ещё не выполнялась."
+			message = v.tr("notChecked")
 		}
 	}
+	if s.Message != "" {
+		message += "\n\n" + s.Message
+	}
 	p.status.SetText(message)
-	showUpdateText(p.version, "Версия выпуска: ", s.Version)
+	showUpdateText(p.version, v.tr("releaseVersion", s.Version), s.Version != "")
 	// GitHub release notes are untrusted. Use a plain label, never rich Markdown or embedded resources.
-	showUpdateText(p.notes, "Что изменилось\n\n", s.Notes)
+	showUpdateText(p.notes, v.tr("releaseNotes")+"\n\n"+s.Notes, strings.TrimSpace(s.Notes) != "")
 	busy := s.Stage == UpdateChecking || s.Stage == UpdateInstalling
 	setEnabled(p.check, !busy && p.check.OnTapped != nil)
 	setEnabled(p.automatic, p.installed && p.install.OnTapped != nil)
@@ -127,14 +132,13 @@ func (v *View) SetUpdateState(s UpdateState) {
 	}
 }
 
-func showUpdateText(label *widget.Label, prefix, value string) {
-	value = strings.TrimSpace(value)
-	if value == "" {
+func showUpdateText(label *widget.Label, value string, visible bool) {
+	if !visible {
 		label.Hide()
 		label.SetText("")
 		return
 	}
-	label.SetText(prefix + value)
+	label.SetText(value)
 	label.Show()
 }
 

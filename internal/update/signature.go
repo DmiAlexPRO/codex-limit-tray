@@ -18,7 +18,7 @@ func SignatureMessage(version, digest string) []byte {
 func decodeKey(encoded string) (ed25519.PublicKey, error) {
 	key, err := base64.StdEncoding.Strict().DecodeString(encoded)
 	if err != nil || len(key) != ed25519.PublicKeySize {
-		return nil, errors.New("доверенный ключ обновлений отсутствует или некорректен")
+		return nil, errors.New("missing or invalid trusted update key")
 	}
 	return ed25519.PublicKey(key), nil
 }
@@ -29,11 +29,11 @@ func decodeSignature(data []byte) ([]byte, error) {
 		s = strings.TrimSuffix(s, "\n")
 	}
 	if len(s) != base64.StdEncoding.EncodedLen(ed25519.SignatureSize) {
-		return nil, errors.New("некорректная подпись установщика")
+		return nil, errors.New("invalid installer signature")
 	}
 	sig, err := base64.StdEncoding.Strict().DecodeString(s)
 	if err != nil || len(sig) != ed25519.SignatureSize {
-		return nil, errors.New("некорректная подпись установщика")
+		return nil, errors.New("invalid installer signature")
 	}
 	return sig, nil
 }

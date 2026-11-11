@@ -11,16 +11,17 @@ $runKey='HKCU:\Software\Microsoft\Windows\CurrentVersion\Run'
 if (Test-Path -LiteralPath $folder) { throw 'Expected a clean installation.' }
 $configDir=Join-Path $env:APPDATA 'CodexLimitTray'
 if (Test-Path -LiteralPath $configDir) { throw 'Expected clean user settings.' }
-New-Item -ItemType Directory -Path $configDir | Out-Null
 $config=Join-Path $configDir 'fyne-preview.json'
-Set-Content -LiteralPath $config -Value '{"autoUpdate":false}' -Encoding ascii
-$configHash=(Get-FileHash -LiteralPath $config).Hash
 function Invoke-Installer([string]$Path, [string[]]$Options) {
     $p=Start-Process -FilePath $Path -ArgumentList $Options -WindowStyle Hidden -PassThru
     if (-not $p.WaitForExit(120000) -or $p.ExitCode -ne 0) { throw "Installer failed: $Path, exit $($p.ExitCode)" }
 }
 $quiet=@('/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART')
 Invoke-Installer $setup $quiet
+$fresh=Get-Content -LiteralPath $config -Raw | ConvertFrom-Json
+if ($fresh.language -ne 'en') { throw "Expected English for the clean English CI user's install, got '$($fresh.language)'." }
+Set-Content -LiteralPath $config -Value '{"autoUpdate":false,"language":"ja"}' -Encoding ascii
+$configHash=(Get-FileHash -LiteralPath $config).Hash
 foreach ($name in @('CodexLimitTray.exe','installed.flag','unins000.exe','LICENSE','THIRD_PARTY_NOTICES.txt')) {
     if (-not (Test-Path -LiteralPath (Join-Path $folder $name))) { throw "Missing installed file: $name" }
 }

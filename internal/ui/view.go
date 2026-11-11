@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"codexlimittray/internal/i18n"
 	"fmt"
 	"image/color"
 	"strings"
@@ -25,6 +26,7 @@ type View struct {
 	compact        fyne.Window
 	floating       *indicatorWidget
 	settings       settings.Settings
+	language       string
 	windows        []quota.Window
 	lastSuccessful []quota.Window
 	status         string
@@ -41,10 +43,11 @@ type View struct {
 }
 
 func NewView(a fyne.App, w fyne.Window, s settings.Settings, refresh, exit func(), save func(settings.Settings) error) *View {
-	v := &View{app: a, window: w, settings: s, status: "Ожидание первого запроса", refresh: refresh, save: save}
+	tr := func(key string) string { return i18n.Text(s.Language, key) }
+	v := &View{app: a, window: w, settings: s, language: s.Language, status: tr("waiting"), refresh: refresh, save: save}
 	a.Settings().SetTheme(appTheme{s})
-	v.dashboard = container.NewStack()
-	v.diagnostic = wrapped("Данные ещё не запрашивались.")
+	v.dashboard = container.NewStack(Dashboard(nil, v.status, s))
+	v.diagnostic = wrapped(tr("diagnosticEmpty"))
 	v.content = container.NewStack()
 	v.navigation = widget.NewButtonWithIcon("", theme.SettingsIcon(), nil)
 	v.navigation.Importance = widget.LowImportance
@@ -61,13 +64,20 @@ func NewView(a fyne.App, w fyne.Window, s settings.Settings, refresh, exit func(
 	w.SetContent(container.NewPadded(container.NewBorder(header, nil, nil, nil, v.content)))
 	w.SetCloseIntercept(w.Hide)
 	w.Resize(fyne.NewSize(420, 600))
-	v.mainPage = dashboardPage(v.dashboard, v.status, v.refresh, v.ShowWidget)
+	v.mainPage = dashboardPage(v.dashboard, v.language, v.refresh, v.ShowWidget)
 	v.settingsPage = container.NewAppTabs(
-		container.NewTabItem("Оформление", v.preferences()),
-		container.NewTabItem("Подключение", v.connection()),
+		container.NewTabItem(tr("appearance"), v.preferences()),
+		container.NewTabItem(tr("connection"), v.connection()),
 	)
 	v.showMain()
 	return v
+}
+
+func (v *View) tr(key string, args ...any) string { return i18n.Text(v.language, key, args...) }
+
+func (v *View) showSaveError(err error) {
+	body := wrapped(v.tr("saveError") + "\n\n" + i18n.ErrorText(v.language, err))
+	dialog.NewCustom(v.tr("error"), v.tr("ok"), body, v.window).Show()
 }
 
 func (v *View) showMain() {
@@ -98,38 +108,41 @@ func (v *View) Update(windows []quota.Window, status, diagnostic string) {
 }
 
 func (v *View) render() {
-	v.dashboard.Objects = []fyne.CanvasObject{Dashboard(v.windows, v.status, v.settings, v.refresh)}
+	display := v.settings
+	display.Language = v.language
+	v.dashboard.Objects = []fyne.CanvasObject{Dashboard(v.windows, v.status, display)}
 	v.dashboard.Refresh()
 	if desk, ok := v.app.(desktop.App); ok {
 		desk.SetSystemTrayIcon(IconResource(v.windows, v.settings))
-		systray.SetTooltip(QuotaTooltip(v.windows))
+		systray.SetTooltip(QuotaTooltip(v.windows, v.language))
 	}
 	if v.compact != nil {
 		if v.floating == nil {
-			v.floating = newIndicatorWidget(v.compact, WidgetIndicator(v.windows, v.settings), v.compact.Hide)
+			v.floating = newIndicatorWidget(v.compact, WidgetIndicator(v.windows, display), v.compact.Hide)
 			v.compact.SetContent(v.floating)
 		} else {
-			v.floating.image = WidgetIndicator(v.windows, v.settings)
+			v.floating.image = WidgetIndicator(v.windows, display)
 			v.floating.Refresh()
 		}
 	}
 }
 
-func dashboardPage(dashboard *fyne.Container, status string, refresh func(), showWidget func()) fyne.CanvasObject {
+func dashboardPage(dashboard *fyne.Container, language string, refresh func(), showWidget func()) fyne.CanvasObject {
 	actions := container.NewGridWithColumns(2,
-		widget.NewButtonWithIcon("Виджет", theme.ViewFullScreenIcon(), showWidget),
-		highButton("Обновить лимиты", theme.ViewRefreshIcon(), refresh),
+		widget.NewButtonWithIcon(i18n.Text(language, "widget"), theme.ViewFullScreenIcon(), showWidget),
+		highButton(i18n.Text(language, "refresh"), theme.ViewRefreshIcon(), refresh),
 	)
 	return container.NewBorder(nil, actions, nil, nil, dashboard)
 }
 
-func Dashboard(windows []quota.Window, status string, s settings.Settings, refresh func()) fyne.CanvasObject {
+func Dashboard(windows []quota.Window, status string, s settings.Settings) fyne.CanvasObject {
+	tr := func(key string) string { return i18n.Text(s.Language, key) }
 	items := container.NewVBox(
-		text("Лимиты", 26, true),
-		muted("Остаток по вашей подписке"),
+		text(tr("limits"), 26, true),
+		muted(tr("remaining")),
 	)
 	if len(windows) == 0 {
-		items.Add(surface(container.NewVBox(text("Данные не получены", 15, true), wrapped("Состояние и причина указаны ниже. При успешном запросе лимиты появятся автоматически."))))
+		items.Add(surface(container.NewVBox(text(tr("noData"), 15, true), wrapped(tr("noDataHint")))))
 	}
 	for index, w := range windows {
 		items.Add(QuotaCard(w, index, s))
@@ -141,14 +154,14 @@ func QuotaCard(w quota.Window, index int, s settings.Settings) fyne.CanvasObject
 	accent := ValueColor(s, w, index)
 	value := text(fmt.Sprintf("%d%%", w.Remaining), 30, true)
 	progress := newMeter(float32(w.Remaining)/100, accent)
-	reset := "Время сброса неизвестно"
+	reset := i18n.Text(s.Language, "resetUnknown")
 	if !w.Reset.IsZero() {
-		reset = "Сброс " + w.Reset.Local().Format("02.01 · 15:04")
+		reset = i18n.Text(s.Language, "reset", w.Reset.Local().Format("02.01 · 15:04"))
 	}
 	marker := canvas.NewRectangle(accent)
 	marker.CornerRadius = 2
 	marker.SetMinSize(fyne.NewSize(8, 8))
-	title := container.NewHBox(container.NewCenter(marker), text(w.Title(), 14, true))
+	title := container.NewHBox(container.NewCenter(marker), text(quotaTitle(w, s.Language), 14, true))
 	line := container.NewBorder(nil, nil, title, value, layout.NewSpacer())
 	return surface(container.NewVBox(line, progress, muted(reset)))
 }
@@ -158,7 +171,7 @@ func (v *View) ShowWidget() {
 		if driver, ok := v.app.Driver().(desktop.Driver); ok {
 			v.compact = driver.CreateSplashWindow()
 		} else {
-			v.compact = v.app.NewWindow("Codex · Виджет")
+			v.compact = v.app.NewWindow("Codex · " + v.tr("widget"))
 		}
 		v.compact.SetPadded(false)
 		v.compact.SetFixedSize(true)
@@ -180,22 +193,23 @@ func highButton(label string, icon fyne.Resource, action func()) *widget.Button 
 }
 
 func (v *View) preferences() fyne.CanvasObject {
-	themeSelect := widget.NewSelect([]string{"Системная", "Светлая", "Тёмная"}, nil)
+	tr := func(key string) string { return v.tr(key) }
+	language, restartNotice := v.languageSelector()
+
 	themeValues := []string{"system", "light", "dark"}
-	themeSelect.SetSelectedIndex(indexOf(themeValues, v.settings.Theme))
-	style := widget.NewSelect([]string{"Цифры", "Бары", "Сегменты", "Кольца"}, nil)
 	styles := []string{"numbers", "bars", "segments", "rings"}
-	style.SetSelectedIndex(indexOf(styles, v.settings.Style))
+	themeSelect := localizedSelect(tr("theme"), []string{tr("system"), tr("light"), tr("dark")}, indexOf(themeValues, v.settings.Theme))
+	style := localizedSelect(tr("icon"), []string{tr("numbers"), tr("bars"), tr("segments"), tr("rings")}, indexOf(styles, v.settings.Style))
 	accentValue, lowValue := v.settings.Accent, v.settings.LowColor
 	thresholdValue := text(fmt.Sprintf("%d%%", v.settings.Threshold), 14, true)
 	threshold := widget.NewSlider(1, 100)
 	threshold.Step = 1
 	threshold.Value = float64(v.settings.Threshold)
-	enabled := widget.NewCheck("Менять цвет ниже порога", nil)
+	enabled := widget.NewCheck(tr("colorBelow"), nil)
 	enabled.Checked = v.settings.ThresholdEnabled
-	sound := widget.NewCheck("Звук при переходе ниже порога", nil)
+	sound := widget.NewCheck(tr("soundBelow"), nil)
 	sound.Checked = v.settings.SoundEnabled
-	autoStart := widget.NewCheck("Запускать при входе в систему", nil)
+	autoStart := widget.NewCheck(tr("autostart"), nil)
 	autoStart.Checked = v.settings.AutoStart
 	preview := canvas.NewImageFromImage(Indicator([]quota.Window{{Remaining: 57}, {Remaining: 82}}, v.settings))
 	preview.SetMinSize(fyne.NewSize(64, 64))
@@ -216,11 +230,11 @@ func (v *View) preferences() fyne.CanvasObject {
 	apply := func() {
 		s := draft()
 		if err := s.Validate(); err != nil {
-			dialog.ShowError(err, v.window)
+			v.showSaveError(err)
 			return
 		}
 		if err := v.save(s); err != nil {
-			dialog.ShowError(err, v.window)
+			v.showSaveError(err)
 			return
 		}
 		v.settings = s
@@ -239,8 +253,8 @@ func (v *View) preferences() fyne.CanvasObject {
 	colorButton := func(title string, value *string) fyne.CanvasObject {
 		swatch := canvas.NewRectangle(hex(*value))
 		swatch.SetMinSize(fyne.NewSize(24, 24))
-		button := widget.NewButton("Выбрать…", func() {
-			picker := dialog.NewColorPicker(title, "Выберите цвет индикатора", func(c color.Color) {
+		button := widget.NewButton(tr("choose"), func() {
+			picker := dialog.NewColorPicker(title, tr("chooseColor"), func(c color.Color) {
 				if c == nil {
 					return
 				}
@@ -269,32 +283,67 @@ func (v *View) preferences() fyne.CanvasObject {
 	sound.OnChanged = func(bool) { apply() }
 	autoStart.OnChanged = func(bool) { apply() }
 	form := widget.NewForm(
-		widget.NewFormItem("Тема", themeSelect),
-		widget.NewFormItem("Значок", style),
-		widget.NewFormItem("Основной цвет", colorButton("Основной цвет", &accentValue)),
-		widget.NewFormItem("Низкий остаток", colorButton("Низкий остаток", &lowValue)),
-		widget.NewFormItem("Порог", container.NewBorder(nil, nil, nil, thresholdValue, threshold)),
+		widget.NewFormItem(tr("language"), language),
+		widget.NewFormItem(tr("theme"), themeSelect),
+		widget.NewFormItem(tr("icon"), style),
+		widget.NewFormItem(tr("accent"), colorButton(tr("accent"), &accentValue)),
+		widget.NewFormItem(tr("lowColor"), colorButton(tr("lowColor"), &lowValue)),
+		widget.NewFormItem(tr("threshold"), container.NewBorder(nil, nil, nil, thresholdValue, threshold)),
 	)
-	note := wrapped("Изменения сохраняются автоматически. Автозапуск открывает приложение в трее.")
-	return container.NewVScroll(container.NewVBox(text("Настройки", 24, true), form, enabled, sound, autoStart, note, container.NewHBox(preview, wrapped("Пример значка: 57 / 82.\nЭто не данные аккаунта."))))
+	note := wrapped(tr("autosave"))
+	return container.NewVScroll(container.NewVBox(text(tr("settings"), 24, true), form, restartNotice, enabled, sound, autoStart, note, container.NewHBox(preview, wrapped(tr("preview")))))
+}
+
+func (v *View) languageSelector() (*widget.Select, *widget.Label) {
+	languages := i18n.Languages()
+	names := make([]string, 0, len(languages))
+	codes := make([]string, 0, len(languages))
+	for _, language := range languages {
+		names = append(names, language.Name)
+		codes = append(codes, language.Code)
+	}
+	selectLanguage := localizedSelect(v.tr("language"), names, indexOf(codes, v.settings.Language))
+	notice := wrapped(v.tr("restart"))
+	notice.Hide()
+	selectLanguage.OnChanged = func(name string) {
+		next := v.settings
+		next.Language = codes[indexOf(names, name)]
+		if next.Language == v.settings.Language {
+			return
+		}
+		if err := v.save(next); err != nil {
+			selectLanguage.Selected = names[indexOf(codes, v.settings.Language)]
+			selectLanguage.Refresh()
+			v.showSaveError(err)
+			return
+		}
+		v.settings = next
+		if next.Language == v.language {
+			notice.Hide()
+		} else {
+			notice.Show()
+		}
+	}
+	return selectLanguage, notice
 }
 
 func (v *View) connection() fyne.CanvasObject {
+	tr := func(key string) string { return v.tr(key) }
 	path := widget.NewEntry()
-	path.SetPlaceHolder("Автоматический поиск Codex")
+	path.SetPlaceHolder(tr("findCodex"))
 	path.SetText(v.settings.CodexPath)
-	apply := highButton("Сохранить и проверить", theme.ConfirmIcon(), func() {
+	apply := highButton(tr("saveCheck"), theme.ConfirmIcon(), func() {
 		s := v.settings
 		s.CodexPath = strings.TrimSpace(path.Text)
 		if err := v.save(s); err != nil {
-			dialog.ShowError(err, v.window)
+			v.showSaveError(err)
 			return
 		}
 		v.settings = s
 		v.refresh()
 	})
-	note := wrapped("Используется существующий вход в Codex. Если требуется авторизация, войдите через Codex desktop или команду codex login. Файлы токенов приложение не читает.")
-	return container.NewVScroll(container.NewVBox(text("Подключение", 24, true), note, path, apply, widget.NewSeparator(), v.diagnostic, widget.NewSeparator(), wrapped("Обновление — 30 секунд; при ошибках задержка увеличивается до 5 минут.")))
+	note := wrapped(tr("signin"))
+	return container.NewVScroll(container.NewVBox(text(tr("connection"), 24, true), note, path, apply, widget.NewSeparator(), v.diagnostic, widget.NewSeparator(), wrapped(tr("polling"))))
 }
 
 func text(value string, size float32, bold bool) *widget.RichText {
@@ -327,4 +376,10 @@ func indexOf(values []string, value string) int {
 		}
 	}
 	return 0
+}
+
+func localizedSelect(label string, options []string, selected int) *widget.Select {
+	control := &widget.Select{Options: options, Selected: options[selected], PlaceHolder: label}
+	control.ExtendBaseWidget(control)
+	return control
 }

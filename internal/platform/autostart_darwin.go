@@ -34,29 +34,29 @@ func launchAgentPlist(executable string) (string, error) {
 func SetAutoStart(enabled bool) error {
 	home, err := os.UserHomeDir()
 	if err != nil {
-		return fmt.Errorf("не удалось найти домашний каталог: %w", err)
+		return fmt.Errorf("could not find home directory: %w", err)
 	}
 	path := filepath.Join(home, "Library", "LaunchAgents", launchAgentLabel+".plist")
 	if !enabled {
 		if err = os.Remove(path); err != nil && !os.IsNotExist(err) {
-			return fmt.Errorf("не удалось отключить автозапуск: %w", err)
+			return fmt.Errorf("could not disable start at login: %w", err)
 		}
 		return nil
 	}
 	executable, err := os.Executable()
 	if err != nil {
-		return fmt.Errorf("не удалось определить путь приложения: %w", err)
+		return fmt.Errorf("could not locate the app: %w", err)
 	}
 	content, err := launchAgentPlist(executable)
 	if err != nil {
 		return err
 	}
 	if err = os.MkdirAll(filepath.Dir(path), 0755); err != nil {
-		return fmt.Errorf("не удалось создать LaunchAgents: %w", err)
+		return fmt.Errorf("could not create LaunchAgents: %w", err)
 	}
 	temporary, err := os.CreateTemp(filepath.Dir(path), "codex-limit-tray-*.plist")
 	if err != nil {
-		return fmt.Errorf("не удалось сохранить автозапуск: %w", err)
+		return fmt.Errorf("could not save start-at-login settings: %w", err)
 	}
 	defer os.Remove(temporary.Name())
 	if err = temporary.Chmod(0644); err == nil {
@@ -69,7 +69,7 @@ func SetAutoStart(enabled bool) error {
 		err = os.Rename(temporary.Name(), path)
 	}
 	if err != nil {
-		return fmt.Errorf("не удалось включить автозапуск: %w", err)
+		return fmt.Errorf("could not enable start at login: %w", err)
 	}
 	return nil
 }

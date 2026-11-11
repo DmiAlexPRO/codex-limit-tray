@@ -47,7 +47,7 @@ func TestUpdatesPage(t *testing.T) {
 		t.Fatal("manual actions must be locked during installation, not the preference")
 	}
 	v.SetUpdateState(UpdateState{Stage: UpdateError, Message: "Повторите попытку", CanInstall: true})
-	if p.status.Text != "Повторите попытку" || p.check.Disabled() || p.install.Disabled() {
+	if !strings.Contains(p.status.Text, "Повторите попытку") || p.check.Disabled() || p.install.Disabled() {
 		t.Fatal("cannot retry after failure")
 	}
 	v.SetUpdateState(UpdateState{Stage: UpdateCurrent, Version: "1.0.0", Notes: "Заметки установленной версии"})

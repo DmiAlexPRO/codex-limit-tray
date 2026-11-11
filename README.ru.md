@@ -13,9 +13,31 @@
 [![Скачивания: macOS arm64](https://img.shields.io/github/downloads/DmiAlexPRO/codex-limit-tray/CodexLimitTray-macOS-arm64.zip?displayAssetName=false&label=macOS%20arm64)](https://github.com/DmiAlexPRO/codex-limit-tray/releases)
 [![Скачивания: macOS x86_64](https://img.shields.io/github/downloads/DmiAlexPRO/codex-limit-tray/CodexLimitTray-macOS-x86_64.zip?displayAssetName=false&label=macOS%20x86_64)](https://github.com/DmiAlexPRO/codex-limit-tray/releases)
 
-Бесплатный инструмент с открытым кодом под [лицензией MIT](LICENSE). Интерфейс на **русском языке**. Нужен установленный Codex со входом через поддерживаемую подписку ChatGPT. Проект независимый и не связан с OpenAI: он показывает **лимиты подписки Codex**, а не общие лимиты ChatGPT и не расходы на API.
+Бесплатный инструмент с открытым кодом под [лицензией MIT](LICENSE). Нужен установленный Codex со входом через поддерживаемую подписку ChatGPT. Проект независимый и не связан с OpenAI: он показывает **лимиты подписки Codex**, а не общие лимиты ChatGPT и не расходы на API.
 
 ![Четыре варианта значка в трее — цифры, бары, сегменты и кольца — на примере одних и тех же данных: осталось 82% пятичасового лимита и 57% недельного.](docs/images/tray-modes.png)
+
+Интерфейс доступен на **19 языках**, в том числе на русском и английском. При установке или первом запуске приложение выбирает поддерживаемый язык системы. Если подходящего языка нет, используется английский. Чтобы сменить язык, нажмите шестерёнку → **Оформление → Язык** и перезапустите приложение.
+
+![English](https://img.shields.io/badge/English-EN-2F7668)
+![Simplified Chinese](https://img.shields.io/badge/%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87-ZH-2F7668)
+![Hindi](https://img.shields.io/badge/%E0%A4%B9%E0%A4%BF%E0%A4%A8%E0%A5%8D%E0%A4%A6%E0%A5%80-HI-2F7668)
+![Spanish](https://img.shields.io/badge/Espa%C3%B1ol-ES-2F7668)
+![Modern Standard Arabic](https://img.shields.io/badge/%D8%A7%D9%84%D8%B9%D8%B1%D8%A8%D9%8A%D8%A9%20%D8%A7%D9%84%D9%81%D8%B5%D8%AD%D9%89-AR-2F7668)
+![French](https://img.shields.io/badge/Fran%C3%A7ais-FR-2F7668)
+![Bengali](https://img.shields.io/badge/%E0%A6%AC%E0%A6%BE%E0%A6%82%E0%A6%B2%E0%A6%BE-BN-2F7668)
+![Portuguese](https://img.shields.io/badge/Portugu%C3%AAs-PT-2F7668)
+![Indonesian](https://img.shields.io/badge/Bahasa%20Indonesia-ID-2F7668)
+![Urdu](https://img.shields.io/badge/%D8%A7%D8%B1%D8%AF%D9%88-UR-2F7668)
+![Russian](https://img.shields.io/badge/%D0%A0%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B9-RU-2F7668)
+![German](https://img.shields.io/badge/Deutsch-DE-2F7668)
+![Japanese](https://img.shields.io/badge/%E6%97%A5%E6%9C%AC%E8%AA%9E-JA-2F7668)
+![Nigerian Pidgin](https://img.shields.io/badge/Naij%C3%A1-PCM-2F7668)
+![Egyptian Arabic](https://img.shields.io/badge/%D8%A7%D9%84%D8%B9%D8%B1%D8%A8%D9%8A%D8%A9%20%D8%A7%D9%84%D9%85%D8%B5%D8%B1%D9%8A%D8%A9-ARZ-2F7668)
+![Marathi](https://img.shields.io/badge/%E0%A4%AE%E0%A4%B0%E0%A4%BE%E0%A4%A0%E0%A5%80-MR-2F7668)
+![Vietnamese](https://img.shields.io/badge/Ti%E1%BA%BFng%20Vi%E1%BB%87t-VI-2F7668)
+![Swahili](https://img.shields.io/badge/Kiswahili-SW-2F7668)
+![Hausa](https://img.shields.io/badge/Hausa-HA-2F7668)
 
 Чтобы изменить значок в трее, нажмите шестерёнку → **Оформление → Значок** и выберите **Цифры**, **Бары**, **Сегменты** или **Кольца**.
 

@@ -4,6 +4,9 @@
 #ifndef AppFileVersion
   #error AppFileVersion is required
 #endif
+#ifndef ArtifactDir
+  #define ArtifactDir "..\dist"
+#endif
 #define AppName "Codex Limit Tray"
 [Setup]
 AppId={{F4E71354-C880-45C1-8137-94D7D588A9F5}
@@ -21,8 +24,9 @@ ArchitecturesInstallIn64BitMode=x64compatible
 DisableDirPage=yes
 DisableProgramGroupPage=yes
 ShowLanguageDialog=no
+LanguageDetectionMethod=uilanguage
 UninstallDisplayIcon={app}\CodexLimitTray.exe
-OutputDir=..\dist
+OutputDir={#ArtifactDir}
 OutputBaseFilename=CodexLimitTray-windows-x64-Setup
 SetupIconFile=app.ico
 Compression=lzma2
@@ -33,9 +37,17 @@ WizardStyle=modern
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
+Name: "arabic"; MessagesFile: "compiler:Languages\Arabic.isl"
+Name: "chinese"; MessagesFile: "compiler:Languages\ChineseSimplified.isl"
+Name: "french"; MessagesFile: "compiler:Languages\French.isl"
+Name: "german"; MessagesFile: "compiler:Languages\German.isl"
+Name: "japanese"; MessagesFile: "compiler:Languages\Japanese.isl"
+Name: "portuguese"; MessagesFile: "compiler:Languages\BrazilianPortuguese.isl"
+Name: "portugal"; MessagesFile: "compiler:Languages\Portuguese.isl"
+Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
 
 [Files]
-Source: "..\dist\CodexLimitTray.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#ArtifactDir}\CodexLimitTray.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\LICENSE"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\THIRD_PARTY_NOTICES.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "installed.flag"; DestDir: "{app}"; Flags: ignoreversion
@@ -44,6 +56,7 @@ Source: "installed.flag"; DestDir: "{app}"; Flags: ignoreversion
 Name: "{group}\{#AppName}"; Filename: "{app}\CodexLimitTray.exe"
 
 [Run]
+Filename: "{app}\CodexLimitTray.exe"; Parameters: "--initialize-language"; Flags: runhidden waituntilterminated; Check: not IsUpdate
 Filename: "{app}\CodexLimitTray.exe"; Description: "{cm:LaunchProgram,{#AppName}}"; Flags: postinstall nowait skipifsilent; Check: not IsUpdate
 Filename: "{app}\CodexLimitTray.exe"; Parameters: "--minimized"; Flags: nowait; Check: IsUpdate
 

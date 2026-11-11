@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"codexlimittray/internal/i18n"
 	"codexlimittray/internal/quota"
 	"codexlimittray/internal/settings"
 	"fmt"
@@ -18,7 +19,7 @@ func WidgetIndicator(windows []quota.Window, s settings.Settings) image.Image {
 	stdDraw.Draw(img, img.Bounds(), image.NewUniform(hex("111923")), image.Point{}, stdDraw.Src)
 	if len(windows) == 0 {
 		drawWidgetText(img, "Codex Limits", 30, 56, 23, hex("EDF3F8"), false, true)
-		drawWidgetText(img, "Данные не получены", 30, 112, 21, hex("8D9AA8"), false, false)
+		drawWidgetText(img, "—", 30, 112, 21, hex("8D9AA8"), false, false)
 		return img
 	}
 	count := min(2, len(windows))
@@ -27,11 +28,14 @@ func WidgetIndicator(windows []quota.Window, s settings.Settings) image.Image {
 		if count == 1 {
 			y = 103
 		}
-		label := "5 ч"
+		label := "5h"
 		if w.Minutes == 10080 {
-			label = "7 д"
+			label = "7d"
 		} else if w.Minutes != 300 {
-			label = w.Title()
+			label = "—"
+			if w.Minutes > 0 {
+				label = fmt.Sprintf("%dm", w.Minutes)
+			}
 		}
 		drawWidgetText(img, label, 28, y, 20, hex("8996A4"), false, false)
 		accent := ValueColor(s, w, index)
@@ -64,13 +68,26 @@ func drawWidgetText(img *image.NRGBA, value string, x, y, size int, c color.NRGB
 	d.DrawString(value)
 }
 
-func QuotaTooltip(windows []quota.Window) string {
-	if len(windows) == 0 {
-		return "Codex Limits — данные не получены"
+func quotaTitle(w quota.Window, language string) string {
+	switch w.Minutes {
+	case 300:
+		return i18n.Text(language, "fiveHours")
+	case 10080:
+		return i18n.Text(language, "week")
+	case 0:
+		return i18n.Text(language, "limit")
+	default:
+		return i18n.Text(language, "minutes", w.Minutes)
 	}
-	lines := []string{"Codex Limits — осталось"}
+}
+
+func QuotaTooltip(windows []quota.Window, language string) string {
+	if len(windows) == 0 {
+		return "Codex Limits — " + i18n.Text(language, "noData")
+	}
+	lines := []string{"Codex Limits"}
 	for _, w := range windows {
-		lines = append(lines, fmt.Sprintf("%s: %d%%", w.Title(), w.Remaining))
+		lines = append(lines, fmt.Sprintf("%s: %d%%", quotaTitle(w, language), w.Remaining))
 	}
 	return strings.Join(lines, "\n")
 }

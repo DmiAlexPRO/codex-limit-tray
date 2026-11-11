@@ -19,14 +19,14 @@ func TestRoundTrip(t *testing.T) {
 	if err := s.Save(path); err != nil {
 		t.Fatal(err)
 	}
-	got, err := Load(path)
+	got, err := Load(path, "en")
 	if err != nil || got != s {
 		t.Fatalf("%+v %v", got, err)
 	}
 	if err = os.WriteFile(path, []byte("broken"), 0600); err != nil {
 		t.Fatal(err)
 	}
-	got, err = Load(path)
+	got, err = Load(path, "en")
 	if err == nil || got != Default() {
 		t.Fatal("corruption not recovered")
 	}
@@ -63,9 +63,43 @@ func TestAutoUpdateDefaultsForOldSettingsAndRespectsOptOut(t *testing.T) {
 		if err := os.WriteFile(path, []byte(tc.json), 0600); err != nil {
 			t.Fatal(err)
 		}
-		got, err := Load(path)
+		got, err := Load(path, "en")
 		if err != nil || got.AutoUpdate != tc.want || got.Theme != "dark" {
 			t.Fatalf("load %s: %+v, %v", tc.json, got, err)
+		}
+	}
+}
+func TestInitializeLanguage(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "profile", "settings.json")
+	if err := InitLanguage(path, "ja"); err != nil {
+		t.Fatal(err)
+	}
+	if err := InitLanguage(path, "ru"); err != nil {
+		t.Fatal(err)
+	}
+	got, err := Load(path, "es")
+	if err != nil || got.Language != "ja" || got.Theme != Default().Theme || !got.AutoUpdate {
+		t.Fatalf("unexpected settings after reinstall: %+v, %v", got, err)
+	}
+}
+
+func TestLanguageMigration(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "settings.json")
+	for _, tc := range []struct {
+		json string
+		want string
+	}{
+		{`{"threshold":42}`, "ru"},
+		{`{"threshold":42,"language":"future"}`, "ru"},
+		{`{"threshold":42,"language":"te"}`, "ru"},
+		{`{"threshold":42,"language":"ar"}`, "ar"},
+	} {
+		if err := os.WriteFile(path, []byte(tc.json), 0600); err != nil {
+			t.Fatal(err)
+		}
+		s, err := Load(path, "ru")
+		if err != nil || s.Language != tc.want || s.Threshold != 42 {
+			t.Fatalf("Load(%s) = %+v, %v", tc.json, s, err)
 		}
 	}
 }

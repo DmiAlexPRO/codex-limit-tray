@@ -56,11 +56,11 @@ var repoPattern = regexp.MustCompile(`^[A-Za-z0-9][A-Za-z0-9-]{0,38}/[A-Za-z0-9_
 
 func (c client) validate() (version, error) {
 	if !repoPattern.MatchString(c.repo) || strings.HasSuffix(c.repo, "/.") || strings.HasSuffix(c.repo, "/..") {
-		return version{}, errors.New("репозиторий обновлений не настроен")
+		return version{}, errors.New("update repository not configured")
 	}
 	v, ok := parseVersion(c.current)
 	if !ok {
-		return version{}, errors.New("некорректная версия приложения")
+		return version{}, errors.New("invalid app version")
 	}
 	return v, nil
 }
@@ -68,13 +68,13 @@ func (c client) validate() (version, error) {
 func redirect(req *http.Request, via []*http.Request) error {
 	u := req.URL
 	if len(via) == 0 || len(via) >= 4 || via[0].URL.Host != "github.com" || u.Scheme != "https" || u.User != nil {
-		return errors.New("перенаправление запрещено")
+		return errors.New("redirect not allowed")
 	}
 	switch u.Host {
 	case "release-assets.githubusercontent.com", "objects.githubusercontent.com":
 		return nil
 	default:
-		return errors.New("неизвестный сервер загрузки")
+		return errors.New("unknown download server")
 	}
 }
 
@@ -159,7 +159,7 @@ func (c client) check(ctx context.Context) (*Release, error) {
 		err = json.Unmarshal(data, &releases)
 	}
 	if err != nil || releases == nil || (stable && releases[0].Tag == "") {
-		return nil, errors.New("некорректное описание релиза на GitHub")
+		return nil, errors.New("invalid GitHub release data")
 	}
 	var best *Release
 	bestVersion := current
@@ -182,12 +182,12 @@ func (c client) check(ctx context.Context) (*Release, error) {
 	return best, nil
 }
 
-var errNotFound = errors.New("файл или релиз не найден на GitHub")
+var errNotFound = errors.New("file or release not found on GitHub")
 
 func (c client) get(ctx context.Context, endpoint string, limit int64) (*http.Response, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint, nil)
 	if err != nil {
-		return nil, errors.New("некорректный адрес обновления")
+		return nil, errors.New("invalid update URL")
 	}
 	req.Header.Set("User-Agent", "CodexLimitTray-Updater")
 	resp, err := c.http.Do(req)
@@ -195,18 +195,18 @@ func (c client) get(ctx context.Context, endpoint string, limit int64) (*http.Re
 		if ctx.Err() != nil {
 			return nil, ctx.Err()
 		}
-		return nil, errors.New("не удалось связаться с сервером обновлений")
+		return nil, errors.New("could not contact the update server")
 	}
 	if resp.StatusCode != http.StatusOK {
 		resp.Body.Close()
 		if resp.StatusCode == http.StatusNotFound {
 			return nil, errNotFound
 		}
-		return nil, fmt.Errorf("сервер обновлений вернул HTTP %d", resp.StatusCode)
+		return nil, fmt.Errorf("update server returned HTTP %d", resp.StatusCode)
 	}
 	if resp.ContentLength > limit {
 		resp.Body.Close()
-		return nil, errors.New("превышен допустимый размер ответа")
+		return nil, errors.New("response exceeds the size limit")
 	}
 	return resp, nil
 }
@@ -222,7 +222,7 @@ func (c client) bytes(ctx context.Context, endpoint string, limit int64) ([]byte
 		return nil, err
 	}
 	if int64(len(data)) > limit {
-		return nil, errors.New("превышен допустимый размер ответа")
+		return nil, errors.New("response exceeds the size limit")
 	}
 	return data, nil
 }
@@ -249,14 +249,14 @@ func (c client) download(ctx context.Context, r *Release, allowCurrent bool) (st
 		return "", err
 	}
 	if r == nil || r.repository != c.repo || strings.TrimPrefix(r.tag, "v") != r.Version {
-		return "", errors.New("нужно повторно проверить релиз")
+		return "", errors.New("check the release again")
 	}
 	v, ok := parseVersion(r.Version)
 	if !ok || (v.compare(current) <= 0 && !(allowCurrent && r.Version == c.current)) || (len(current.pre) == 0 && len(v.pre) != 0) {
-		return "", errors.New("неподходящая версия обновления")
+		return "", errors.New("incompatible update version")
 	}
 	if !r.hasAssets {
-		return "", errors.New("в релизе нет подписанного установщика Windows x64")
+		return "", errors.New("release has no signed Windows x64 installer")
 	}
 	ctx, cancel := context.WithTimeout(ctx, 4*time.Minute)
 	defer cancel()
@@ -296,10 +296,10 @@ func (c client) download(ctx context.Context, r *Release, allowCurrent bool) (st
 		return "", closeErr
 	}
 	if n == 0 || n > maxInstaller || (resp.ContentLength >= 0 && n != resp.ContentLength) {
-		return "", errors.New("некорректный размер установщика")
+		return "", errors.New("invalid installer size")
 	}
 	if !ed25519.Verify(key, SignatureMessage(r.Version, hex.EncodeToString(hash.Sum(nil))), sig) {
-		return "", errors.New("подпись обновления недействительна — установка отменена")
+		return "", errors.New("invalid update signature; installation canceled")
 	}
 	if err := ctx.Err(); err != nil {
 		return "", err
