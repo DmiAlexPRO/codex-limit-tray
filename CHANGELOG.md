@@ -2,10 +2,12 @@
 
 This file records user-facing changes. Release versions follow Semantic Versioning.
 
-## Unreleased
+## 3.2.0 — 27 interface languages
 
 - Added Belarusian, Kazakh, Ukrainian, Polish, Italian, Turkish, Kyrgyz and Armenian, bringing the app to 27 interface languages.
 - Gave dashboard actions room for longer translated labels.
+
+See the [3.2.0 release notes](docs/releases/v3.2.0.md).
 
 ## 3.1.0 — 19 interface languages
 
