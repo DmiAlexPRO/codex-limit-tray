@@ -22,9 +22,12 @@ if ($env:GITHUB_ACTIONS -ne 'true') {
     $env:GOCACHE=Join-Path $root '.cache\build'
 }
 $compiler=Join-Path $root '.tools\w64devkit\bin\gcc.exe'
+$windresOptions=@()
 if (Test-Path -LiteralPath $compiler) {
     $env:CC='gcc'
     $env:PATH="$(Split-Path $compiler);$env:PATH"
+    # windres invokes the preprocessor through cmd.exe, so use a space-free relative command.
+    $windresOptions+= '--preprocessor=.tools\w64devkit\bin\gcc.exe -E -xc-header -DRC_INVOKED'
 }
 $env:CGO_ENABLED='1'
 if ($Preview) { $env:CODEX_LIMIT_PREVIEW='1' }
@@ -36,17 +39,20 @@ if ($LASTEXITCODE -ne 0) { throw 'Vet failed.' }
 $flags="-H=windowsgui -s -w -X codexlimittray/internal/update.Version=$Version -X codexlimittray/internal/update.Repository=$Repository -X codexlimittray/internal/update.PublicKey=$PublicKey"
 $fileVersion=($Version -split '-')[0]
 $resource=Join-Path $root 'cmd\codex-limit-tray\resources_windows_amd64.syso'
-if (Test-Path -LiteralPath $resource) { throw "Resource file already present (concurrent/interrupted build): $resource" }
+$resourceScript='cmd/codex-limit-tray/resources_windows_amd64.rc'
+if ((Test-Path -LiteralPath $resource) -or (Test-Path -LiteralPath $resourceScript)) {
+    throw "Resource files already present (concurrent/interrupted build): $resource"
+}
 try {
     $rc=(Get-Content -LiteralPath 'packaging/windows.rc.in' -Raw).Replace('@VERSION@', $Version).Replace('@NUMERIC_VERSION@', ($fileVersion.Replace('.', ',')+',0'))
-    $resourceScript=Join-Path $output 'windows.rc'
     Set-Content -LiteralPath $resourceScript -Value $rc -Encoding ascii
-    windres -I packaging -i $resourceScript -O coff -o $resource
+    windres @windresOptions -I packaging -i $resourceScript -O coff -o $resource
     if ($LASTEXITCODE -ne 0) { throw 'Failed to compile Windows icon and version resources.' }
     go build -trimpath -ldflags $flags -o (Join-Path $output 'CodexLimitTray.exe') ./cmd/codex-limit-tray
     if ($LASTEXITCODE -ne 0) { throw 'Build failed.' }
 } finally {
     if (Test-Path -LiteralPath $resource) { Remove-Item -LiteralPath $resource }
+    if (Test-Path -LiteralPath $resourceScript) { Remove-Item -LiteralPath $resourceScript }
 }
 Copy-Item LICENSE,THIRD_PARTY_NOTICES.txt -Destination $output -Force
 $archive=Join-Path $output 'CodexLimitTray-windows-x64.zip'
