@@ -6,6 +6,13 @@
 
 **[Download for Windows · x64 installer](https://github.com/DmiAlexPRO/codex-limit-tray/releases/latest/download/CodexLimitTray-windows-x64-Setup.exe)** · [All releases and portable downloads](https://github.com/DmiAlexPRO/codex-limit-tray/releases)
 
+Downloads across all GitHub releases:
+
+[![Downloads: Windows installer](https://img.shields.io/github/downloads/DmiAlexPRO/codex-limit-tray/CodexLimitTray-windows-x64-Setup.exe?displayAssetName=false&label=Windows%20installer)](https://github.com/DmiAlexPRO/codex-limit-tray/releases)
+[![Downloads: Windows portable](https://img.shields.io/github/downloads/DmiAlexPRO/codex-limit-tray/CodexLimitTray-windows-x64.zip?displayAssetName=false&label=Windows%20portable)](https://github.com/DmiAlexPRO/codex-limit-tray/releases)
+[![Downloads: macOS arm64](https://img.shields.io/github/downloads/DmiAlexPRO/codex-limit-tray/CodexLimitTray-macOS-arm64.zip?displayAssetName=false&label=macOS%20arm64)](https://github.com/DmiAlexPRO/codex-limit-tray/releases)
+[![Downloads: macOS x86_64](https://img.shields.io/github/downloads/DmiAlexPRO/codex-limit-tray/CodexLimitTray-macOS-x86_64.zip?displayAssetName=false&label=macOS%20x86_64)](https://github.com/DmiAlexPRO/codex-limit-tray/releases)
+
 Free under the [MIT License](LICENSE). Requires a local Codex installation signed in to a supported ChatGPT subscription. This independent project is not affiliated with OpenAI; it shows **Codex subscription quotas**, not general ChatGPT limits or API spending.
 
 ![Four tray icon styles — numbers, bars, segments and rings — with sample quotas: 82% remaining in the five-hour window and 57% in the weekly window.](docs/images/tray-modes.en.png)
