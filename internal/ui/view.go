@@ -4,6 +4,8 @@ import (
 	"codexlimittray/internal/i18n"
 	"fmt"
 	"image/color"
+	"net/url"
+	"runtime"
 	"strings"
 
 	"codexlimittray/internal/platform"
@@ -290,7 +292,28 @@ func (v *View) preferences() fyne.CanvasObject {
 		widget.NewFormItem(tr("threshold"), container.NewBorder(nil, nil, nil, thresholdValue, threshold)),
 	)
 	note := wrapped(tr("autosave"))
-	return container.NewVScroll(container.NewVBox(text(tr("settings"), 24, true), form, restartNotice, enabled, sound, autoStart, note, container.NewHBox(preview, wrapped(tr("preview")))))
+	content := container.NewVBox(text(tr("settings"), 24, true), form, restartNotice, enabled, sound, autoStart, note, container.NewHBox(preview, wrapped(tr("preview"))))
+	for _, item := range v.trayVisibilityHelp(runtime.GOOS) {
+		content.Add(item)
+	}
+	return container.NewVScroll(content)
+}
+
+func (v *View) trayVisibilityHelp(goos string) []fyne.CanvasObject {
+	switch goos {
+	case "windows":
+		openSettings := widget.NewButton(v.tr("openTaskbarSettings"), func() {
+			if err := v.app.OpenURL(&url.URL{Scheme: "ms-settings", Opaque: "taskbar"}); err != nil {
+				body := wrapped(v.tr("openTaskbarSettingsError"))
+				dialog.NewCustom(v.tr("error"), v.tr("ok"), body, v.window).Show()
+			}
+		})
+		return []fyne.CanvasObject{widget.NewSeparator(), wrapped(v.tr("taskbarIconHelp")), openSettings}
+	case "darwin":
+		return []fyne.CanvasObject{widget.NewSeparator(), wrapped(v.tr("menuBarIconHelp"))}
+	default:
+		return nil
+	}
 }
 
 func (v *View) languageSelector() (*widget.Select, *widget.Label) {
