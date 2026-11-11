@@ -2,6 +2,13 @@
 
 This file records user-facing changes. Release versions follow Semantic Versioning.
 
+## 3.3.0 — Tray icon visibility
+
+- Added tray icon visibility instructions in Appearance and both READMEs.
+- On Windows, Appearance can open the system taskbar settings directly. On macOS, it explains where to find menu bar controls.
+
+See the [3.3.0 release notes](docs/releases/v3.3.0.md).
+
 ## 3.2.0 — 27 interface languages
 
 - Added Belarusian, Kazakh, Ukrainian, Polish, Italian, Turkish, Kyrgyz and Armenian, bringing the app to 27 interface languages.

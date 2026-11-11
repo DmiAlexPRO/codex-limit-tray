@@ -73,6 +73,16 @@ In **Settings → Updates**, read what changed, check manually, or turn off **Au
 - In **Appearance**, choose a theme, tray indicator style, low-quota color and optional Windows sound. To start in the tray at login, enable **Start at login**.
 - The dashboard shows only the quota windows Codex returns. If a request fails, the app shows the error instead of presenting old numbers as current.
 
+### Keep the tray icon visible
+
+1. Launch **Codex Limit Tray**.
+2. On Windows, right-click an empty spot on the taskbar and open **Taskbar settings**.
+3. On **Windows 11**, expand **Other system tray icons**. On **Windows 10**, open **Notification area → Select which icons appear on the taskbar**. Turn on **Codex Limit Tray**. You can also open the hidden icons menu (**↑**) and drag the icon next to the clock. [Microsoft Support](https://support.microsoft.com/en-us/windows/experience/personalization/customize-the-taskbar-in-windows)
+
+On **macOS**, the app adds its icon to the menu bar, not the Dock. If the icon is hidden on macOS 26 or later and the app is listed under **System Settings → Menu Bar → Allow in the Menu Bar**, turn it on there. [Apple Support](https://support.apple.com/en-us/guide/mac-help/mchlad96d366/mac)
+
+The icon appears while the app is running. To have it appear after signing in, enable **Appearance → Start at login** in the app.
+
 ## What leaves my computer?
 
 Codex Limit Tray starts your local `codex app-server` and reads `account/rateLimits/read`. Codex handles authentication; the tray app never reads credential files. Successful polls run every 30 seconds; failures back off to five minutes. Each poll currently starts a short-lived app-server process.
