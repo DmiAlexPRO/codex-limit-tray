@@ -45,6 +45,11 @@ Name: "japanese"; MessagesFile: "compiler:Languages\Japanese.isl"
 Name: "portuguese"; MessagesFile: "compiler:Languages\BrazilianPortuguese.isl"
 Name: "portugal"; MessagesFile: "compiler:Languages\Portuguese.isl"
 Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
+Name: "armenian"; MessagesFile: "compiler:Languages\Armenian.isl"
+Name: "italian"; MessagesFile: "compiler:Languages\Italian.isl"
+Name: "polish"; MessagesFile: "compiler:Languages\Polish.isl"
+Name: "turkish"; MessagesFile: "compiler:Languages\Turkish.isl"
+Name: "ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
 
 [Files]
 Source: "{#ArtifactDir}\CodexLimitTray.exe"; DestDir: "{app}"; Flags: ignoreversion

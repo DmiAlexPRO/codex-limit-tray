@@ -17,7 +17,7 @@
 
 ![Четыре варианта значка в трее — цифры, бары, сегменты и кольца — на примере одних и тех же данных: осталось 82% пятичасового лимита и 57% недельного.](docs/images/tray-modes.png)
 
-Интерфейс доступен на **19 языках**, в том числе на русском и английском. При установке или первом запуске приложение выбирает поддерживаемый язык системы. Если подходящего языка нет, используется английский. Чтобы сменить язык, нажмите шестерёнку → **Оформление → Язык** и перезапустите приложение.
+Интерфейс доступен на **27 языках**, в том числе на русском и английском. При установке или первом запуске приложение выбирает поддерживаемый язык системы. Если подходящего языка нет, используется английский. Чтобы сменить язык, нажмите шестерёнку → **Оформление → Язык** и перезапустите приложение.
 
 ![English](https://img.shields.io/badge/English-EN-2F7668)
 ![Simplified Chinese](https://img.shields.io/badge/%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87-ZH-2F7668)
@@ -38,6 +38,14 @@
 ![Vietnamese](https://img.shields.io/badge/Ti%E1%BA%BFng%20Vi%E1%BB%87t-VI-2F7668)
 ![Swahili](https://img.shields.io/badge/Kiswahili-SW-2F7668)
 ![Hausa](https://img.shields.io/badge/Hausa-HA-2F7668)
+![Belarusian](https://img.shields.io/badge/%D0%91%D0%B5%D0%BB%D0%B0%D1%80%D1%83%D1%81%D0%BA%D0%B0%D1%8F-BE-2F7668)
+![Kazakh](https://img.shields.io/badge/%D2%9A%D0%B0%D0%B7%D0%B0%D2%9B%D1%88%D0%B0-KK-2F7668)
+![Ukrainian](https://img.shields.io/badge/%D0%A3%D0%BA%D1%80%D0%B0%D1%97%D0%BD%D1%81%D1%8C%D0%BA%D0%B0-UK-2F7668)
+![Polish](https://img.shields.io/badge/Polski-PL-2F7668)
+![Italian](https://img.shields.io/badge/Italiano-IT-2F7668)
+![Turkish](https://img.shields.io/badge/T%C3%BCrk%C3%A7e-TR-2F7668)
+![Kyrgyz](https://img.shields.io/badge/%D0%9A%D1%8B%D1%80%D0%B3%D1%8B%D0%B7%D1%87%D0%B0-KY-2F7668)
+![Armenian](https://img.shields.io/badge/%D5%80%D5%A1%D5%B5%D5%A5%D6%80%D5%A5%D5%B6-HY-2F7668)
 
 Чтобы изменить значок в трее, нажмите шестерёнку → **Оформление → Значок** и выберите **Цифры**, **Бары**, **Сегменты** или **Кольца**.
 

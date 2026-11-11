@@ -12,6 +12,7 @@ import (
 	"codexlimittray/internal/settings"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/test"
+	"fyne.io/fyne/v2/widget"
 )
 
 func TestLanguageSelection(t *testing.T) {
@@ -31,29 +32,30 @@ func TestLanguageSelection(t *testing.T) {
 	control, notice := v.languageSelector()
 	w.SetContent(control)
 	w.Show()
-	if control.Selected != "English" || len(control.Options) != 19 || notice.Visible() {
+	if control.Selected != "English" || len(control.Options) != 27 || notice.Visible() {
 		t.Fatal("incorrect initial language selector")
 	}
 	test.Tap(control)
-	if w.Canvas().Overlays().Top() == nil {
-		t.Fatal("language list did not open")
+	popup, ok := w.Canvas().Focused().(*widget.PopUpMenu)
+	if !ok {
+		t.Fatal("language list did not open with keyboard support")
 	}
-	w.Canvas().Overlays().Top().Hide()
-	control.SetSelected("日本語")
+	popup.TypedKey(&fyne.KeyEvent{Name: fyne.KeyUp})
+	popup.TypedKey(&fyne.KeyEvent{Name: fyne.KeyReturn})
 	saved, err := settings.Load(path, "en")
-	if err != nil || saved.Language != "ja" || !notice.Visible() || v.language != "en" {
+	if err != nil || saved.Language != "hy" || !notice.Visible() || v.language != "en" {
 		t.Fatalf("selection was not saved for the next launch: %+v, %v", saved, err)
 	}
 	rejectSave = true
 	control.SetSelected("Русский")
-	if control.Selected != "日本語" || v.settings.Language != "ja" {
+	if control.Selected != "Հայերեն" || v.settings.Language != "hy" {
 		t.Fatal("failed write changed language")
 	}
 	w.Close()
 
 	after := a.NewWindow("Test after restart")
 	restarted := NewView(a, after, saved, func() {}, func() {}, save)
-	if restarted.settingsPage.Items[0].Text != "外観" {
+	if restarted.settingsPage.Items[0].Text != "Տեսք" {
 		t.Fatal("saved language not applied on restart")
 	}
 	after.Close()

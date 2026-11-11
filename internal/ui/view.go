@@ -128,10 +128,9 @@ func (v *View) render() {
 }
 
 func dashboardPage(dashboard *fyne.Container, language string, refresh func(), showWidget func()) fyne.CanvasObject {
-	actions := container.NewGridWithColumns(2,
-		widget.NewButtonWithIcon(i18n.Text(language, "widget"), theme.ViewFullScreenIcon(), showWidget),
-		highButton(i18n.Text(language, "refresh"), theme.ViewRefreshIcon(), refresh),
-	)
+	widgetButton := widget.NewButtonWithIcon(i18n.Text(language, "widget"), theme.ViewFullScreenIcon(), showWidget)
+	refreshButton := highButton(i18n.Text(language, "refresh"), theme.ViewRefreshIcon(), refresh)
+	actions := container.NewBorder(nil, nil, widgetButton, nil, refreshButton)
 	return container.NewBorder(nil, actions, nil, nil, dashboard)
 }
 
