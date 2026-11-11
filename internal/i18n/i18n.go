@@ -18,7 +18,7 @@ type Language struct {
 	Name string
 }
 
-// Languages are listed in descending order by total speakers (Ethnologue 2026).
+// Languages returns the display order of the language picker.
 func Languages() []Language {
 	return []Language{
 		{"en", "English"}, {"zh", "简体中文"}, {"hi", "हिन्दी"},
@@ -28,6 +28,9 @@ func Languages() []Language {
 		{"ja", "日本語"}, {"pcm", "Naijá"}, {"arz", "العربية المصرية"},
 		{"mr", "मराठी"}, {"vi", "Tiếng Việt"},
 		{"sw", "Kiswahili"}, {"ha", "Hausa"},
+		{"be", "Беларуская"}, {"kk", "Қазақша"}, {"uk", "Українська"},
+		{"pl", "Polski"}, {"it", "Italiano"}, {"tr", "Türkçe"},
+		{"ky", "Кыргызча"}, {"hy", "Հայերեն"},
 	}
 }
 
