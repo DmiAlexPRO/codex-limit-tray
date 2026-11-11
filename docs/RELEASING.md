@@ -35,6 +35,7 @@
 
 ## Manual acceptance
 
+- Language: on a clean Windows install, confirm the system language (or English fallback) is selected. Change it in Appearance, restart, and verify an upgrade preserves the choice. Spot-check Chinese, an Arabic-script locale, and an Indic-script locale.
 - Fresh user: first launch, real login, one/two quota windows, logout/account switch and missing-data behavior.
 - Network loss/reconnect, timeout, retry backoff and suspend/resume.
 - Tray at 100/150/200% DPI; hide/show, minimize/close, widget drag/hide and taskbar/Alt+Tab behavior.

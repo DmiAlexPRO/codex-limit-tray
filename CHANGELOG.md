@@ -2,6 +2,14 @@
 
 This file records user-facing changes. Release versions follow Semantic Versioning.
 
+## 3.1.0 — 20 interface languages
+
+- Localized the dashboard, settings, tray menu, quota labels, connection status and update screens.
+- Added a saved language preference under **Appearance → Language**. The change takes effect after restarting.
+- The Windows installer initializes the app language from the system on a fresh install. Portable copies and macOS detect it on first launch. English is the fallback; reinstalling or upgrading preserves an existing choice.
+
+See the [3.1.0 release notes](docs/releases/v3.1.0.md).
+
 ## 3.0.1 — First release after the repository history cleanup
 
 - Rebuilt with an updated Go toolchain and updated security-sensitive dependencies.

@@ -17,7 +17,7 @@ Free under the [MIT License](LICENSE). Requires a local Codex installation signe
 
 ![Four tray icon styles — numbers, bars, segments and rings — with sample quotas: 82% remaining in the five-hour window and 57% in the weekly window.](docs/images/tray-modes.en.png)
 
-The app interface is currently **Russian only**. UI labels below are translated into English for this guide; see the [Russian guide for screenshots and original labels](README.ru.md).
+The app has **20 interface languages**. It uses a supported system language on installation or first launch and falls back to English. To choose another language, open the gear → **Appearance → Language**, select it, and restart Codex Limit Tray. [Supported languages](docs/releases/v3.1.0.md#languages).
 
 To change the tray icon, open the gear → **Appearance → Icon** and choose **Numbers**, **Bars**, **Segments** or **Rings**.
 
@@ -42,7 +42,7 @@ In **Settings → Updates**, read what changed, check manually, or turn off **Au
 ## Using the tray and widget
 
 - Hover over the tray icon for both percentages. Open **Widget** for an always-on-top view; right-click the widget to hide it.
-- In **Appearance**, choose a theme, tray indicator style, low-quota color and optional Windows sound. To start in the tray at login, enable **Launch at login**.
+- In **Appearance**, choose a theme, tray indicator style, low-quota color and optional Windows sound. To start in the tray at login, enable **Start at login**.
 - The dashboard shows only the quota windows Codex returns. If a request fails, the app shows the error instead of presenting old numbers as current.
 
 ## What leaves my computer?

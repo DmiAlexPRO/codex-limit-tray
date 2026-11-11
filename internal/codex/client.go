@@ -2,6 +2,7 @@ package codex
 
 import (
 	"bufio"
+	"codexlimittray/internal/i18n"
 	"codexlimittray/internal/quota"
 	"codexlimittray/internal/update"
 	"context"
@@ -16,8 +17,8 @@ import (
 	"time"
 )
 
-var ErrLogin = errors.New("требуется вход в Codex через ChatGPT")
-var ErrVersion = errors.New("обновите Codex: несовместимый ответ сервера")
+var ErrLogin = i18n.MessageError("login")
+var ErrVersion = i18n.MessageError("version")
 
 type response struct {
 	ID     int             `json:"id"`
@@ -34,12 +35,12 @@ type response struct {
 func Resolve(override string) (string, error) {
 	if override != "" {
 		if !filepath.IsAbs(override) {
-			return "", errors.New("укажите полный путь к исполняемому файлу Codex")
+			return "", i18n.MessageError("codexPath")
 		}
 		if info, err := os.Stat(override); err == nil && !info.IsDir() {
 			return override, nil
 		}
-		return "", errors.New("выбранный файл Codex не найден")
+		return "", i18n.MessageError("codexMissing")
 	}
 	if runtime.GOOS == "windows" {
 		root := filepath.Join(os.Getenv("LOCALAPPDATA"), "OpenAI", "Codex", "bin")
@@ -74,7 +75,7 @@ func Resolve(override string) (string, error) {
 			}
 		}
 	}
-	return "", errors.New("Codex не найден. Укажите путь к нему в настройках")
+	return "", i18n.MessageError("codexMissing")
 }
 
 // Read owns a bounded app-server session. It never opens credential files.
@@ -85,22 +86,22 @@ func Read(ctx context.Context, path string) ([]quota.Window, error) {
 	configureProcess(cmd)
 	input, err := cmd.StdinPipe()
 	if err != nil {
-		return nil, errors.New("не удалось открыть канал Codex")
+		return nil, errors.New("could not open Codex stdin")
 	}
 	output, err := cmd.StdoutPipe()
 	if err != nil {
 		input.Close()
-		return nil, errors.New("не удалось открыть канал Codex")
+		return nil, errors.New("could not open Codex stdout")
 	}
 	cmd.Stderr = io.Discard
 	if err = cmd.Start(); err != nil {
 		input.Close()
-		return nil, errors.New("не удалось запустить Codex")
+		return nil, errors.New("could not start Codex")
 	}
 	defer func() { input.Close(); _ = cmd.Process.Kill(); _ = cmd.Wait() }()
 	version, _ := json.Marshal(update.Version)
 	if _, err = io.WriteString(input, `{"id":1,"method":"initialize","params":{"clientInfo":{"name":"codex_limit_tray","version":`+string(version)+"}}}\n"); err != nil {
-		return nil, errors.New("ошибка связи с Codex")
+		return nil, errors.New("could not initialize the Codex connection")
 	}
 	scanner := bufio.NewScanner(output)
 	scanner.Buffer(make([]byte, 4096), 1024*1024)
@@ -122,13 +123,13 @@ func Read(ctx context.Context, path string) ([]quota.Window, error) {
 			return quota.Parse(message.Result)
 		}
 		if _, err = io.WriteString(input, "{\"method\":\"initialized\"}\n{\"id\":2,\"method\":\"account/rateLimits/read\"}\n"); err != nil {
-			return nil, errors.New("ошибка связи с Codex")
+			return nil, errors.New("Codex connection failed")
 		}
 	}
 	if ctx.Err() != nil {
-		return nil, errors.New("Codex не ответил за отведённое время")
+		return nil, errors.New("Codex response timed out")
 	}
-	return nil, errors.New("соединение с Codex прервано")
+	return nil, errors.New("Codex connection closed")
 }
 func classify(message string) error {
 	message = strings.ToLower(message)
@@ -140,5 +141,5 @@ func classify(message string) error {
 	if strings.Contains(message, "decode") {
 		return ErrVersion
 	}
-	return errors.New("не удалось получить лимиты. Проверьте сеть и вход в Codex")
+	return i18n.MessageError("codexRead")
 }

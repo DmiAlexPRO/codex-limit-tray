@@ -17,7 +17,7 @@ var installerFile = regexp.MustCompile(`^CodexLimitTray-update-[0-9a-f]{32}\.exe
 func cacheRoot(create bool) (*os.Root, error) {
 	base, err := os.UserCacheDir()
 	if err != nil || !filepath.IsAbs(base) {
-		return nil, errors.New("каталог кэша пользователя недоступен")
+		return nil, errors.New("user cache directory unavailable")
 	}
 	parent, err := os.OpenRoot(base)
 	if err != nil {
@@ -46,7 +46,7 @@ func cacheChild(parent *os.Root, name string, create bool) (*os.Root, error) {
 		return nil, err
 	}
 	if !info.IsDir() || reparse(info) {
-		return nil, errors.New("небезопасный каталог кэша")
+		return nil, errors.New("unsafe cache directory")
 	}
 	return parent.OpenRoot(name)
 }

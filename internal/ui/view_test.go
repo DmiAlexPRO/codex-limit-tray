@@ -209,7 +209,7 @@ func TestDropdownDoesNotResizeCanvas(t *testing.T) {
 	if form == nil {
 		t.Fatal("settings form not found")
 	}
-	for _, index := range []int{0, 1} {
+	for _, index := range []int{0, 1, 2} {
 		selectBox, ok := form.Items[index].Widget.(*widget.Select)
 		if !ok {
 			t.Fatal("select not found")
@@ -276,10 +276,10 @@ func TestTooltipAndWidgetStyles(t *testing.T) {
 	a := test.NewApp()
 	defer a.Quit()
 	windows := []quota.Window{{Remaining: 57, Minutes: 300}, {Remaining: 12, Minutes: 10080}}
-	if QuotaTooltip(windows) != "Codex Limits — осталось\n5 часов: 57%\nНеделя: 12%" {
-		t.Fatal(QuotaTooltip(windows))
+	if QuotaTooltip(windows, "ru") != "Codex Limits\n5 часов: 57%\nНеделя: 12%" {
+		t.Fatal(QuotaTooltip(windows, "ru"))
 	}
-	if QuotaTooltip(nil) != "Codex Limits — данные не получены" {
+	if QuotaTooltip(nil, "ru") != "Codex Limits — Данные не получены" {
 		t.Fatal("unknown tooltip")
 	}
 	for _, style := range []string{"numbers", "bars", "segments", "rings"} {

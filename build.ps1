@@ -4,7 +4,8 @@ param(
     [ValidatePattern('^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$')][string]$Version='3.0.0-preview',
     [string]$Repository='DmiAlexPRO/codex-limit-tray',
     [string]$PublicKey='',
-    [string]$IsccPath=''
+    [string]$IsccPath='',
+    [string]$OutputDirectory='dist'
 )
 $ErrorActionPreference='Stop'
 if (-not $PublicKey) { $PublicKey=(Get-Content -LiteralPath "$PSScriptRoot\packaging\update-public-key.txt" -Raw).Trim() }
@@ -27,7 +28,7 @@ if (Test-Path -LiteralPath $compiler) {
 }
 $env:CGO_ENABLED='1'
 if ($Preview) { $env:CODEX_LIMIT_PREVIEW='1' }
-New-Item -ItemType Directory -Force (Join-Path $root 'dist') | Out-Null
+$output=(New-Item -ItemType Directory -Force -Path $OutputDirectory).FullName
 go test -trimpath ./...
 if ($LASTEXITCODE -ne 0) { throw 'Tests failed.' }
 go vet -trimpath ./...
@@ -38,30 +39,31 @@ $resource=Join-Path $root 'cmd\codex-limit-tray\resources_windows_amd64.syso'
 if (Test-Path -LiteralPath $resource) { throw "Resource file already present (concurrent/interrupted build): $resource" }
 try {
     $rc=(Get-Content -LiteralPath 'packaging/windows.rc.in' -Raw).Replace('@VERSION@', $Version).Replace('@NUMERIC_VERSION@', ($fileVersion.Replace('.', ',')+',0'))
-    Set-Content -LiteralPath dist/windows.rc -Value $rc -Encoding ascii
-    windres -I packaging -i dist/windows.rc -O coff -o $resource
+    $resourceScript=Join-Path $output 'windows.rc'
+    Set-Content -LiteralPath $resourceScript -Value $rc -Encoding ascii
+    windres -I packaging -i $resourceScript -O coff -o $resource
     if ($LASTEXITCODE -ne 0) { throw 'Failed to compile Windows icon and version resources.' }
-    go build -trimpath -ldflags $flags -o dist/CodexLimitTray.exe ./cmd/codex-limit-tray
+    go build -trimpath -ldflags $flags -o (Join-Path $output 'CodexLimitTray.exe') ./cmd/codex-limit-tray
     if ($LASTEXITCODE -ne 0) { throw 'Build failed.' }
 } finally {
     if (Test-Path -LiteralPath $resource) { Remove-Item -LiteralPath $resource }
 }
-Copy-Item LICENSE,THIRD_PARTY_NOTICES.txt -Destination dist -Force
-$archive=Join-Path $root 'dist\CodexLimitTray-windows-x64.zip'
-Compress-Archive -LiteralPath (Join-Path $root 'dist\CodexLimitTray.exe'),(Join-Path $root 'dist\LICENSE'),(Join-Path $root 'dist\THIRD_PARTY_NOTICES.txt') -DestinationPath $archive -Force
+Copy-Item LICENSE,THIRD_PARTY_NOTICES.txt -Destination $output -Force
+$archive=Join-Path $output 'CodexLimitTray-windows-x64.zip'
+Compress-Archive -LiteralPath (Join-Path $output 'CodexLimitTray.exe'),(Join-Path $output 'LICENSE'),(Join-Path $output 'THIRD_PARTY_NOTICES.txt') -DestinationPath $archive -Force
 $artifacts=@($archive)
 if ($Installer) {
     if (-not $IsccPath) {
         $IsccPath=@("$root\.tools\inno\ISCC.exe", "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe", "$env:ProgramFiles\Inno Setup 7\ISCC.exe", (Get-Command ISCC.exe -ErrorAction SilentlyContinue).Source) | Where-Object { $_ -and (Test-Path -LiteralPath $_) } | Select-Object -First 1
     }
     if (-not $IsccPath) { throw 'Inno Setup 6.3+ required: specify -IsccPath or run scripts/get-inno.ps1.' }
-    & $IsccPath "/DAppSemVer=$Version" "/DAppFileVersion=$fileVersion.0" (Join-Path $root 'packaging\windows.iss')
+    & $IsccPath "/DAppSemVer=$Version" "/DAppFileVersion=$fileVersion.0" "/DArtifactDir=$output" (Join-Path $root 'packaging\windows.iss')
     if ($LASTEXITCODE -ne 0) { throw 'Installer build failed.' }
-    $artifacts+=Join-Path $root 'dist\CodexLimitTray-windows-x64-Setup.exe'
+    $artifacts+=Join-Path $output 'CodexLimitTray-windows-x64-Setup.exe'
 }
 $checksums=foreach ($file in $artifacts) {
     $hash=(Get-FileHash -LiteralPath $file -Algorithm SHA256).Hash.ToLowerInvariant()
     "$hash  $([IO.Path]::GetFileName($file))"
 }
-Set-Content -LiteralPath (Join-Path $root 'dist\SHA256SUMS') -Value $checksums -Encoding ascii
+Set-Content -LiteralPath (Join-Path $output 'SHA256SUMS') -Value $checksums -Encoding ascii
 Write-Output $checksums

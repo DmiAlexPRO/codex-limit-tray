@@ -1,9 +1,10 @@
 package codex
 
 import (
+	"codexlimittray/internal/i18n"
 	"codexlimittray/internal/quota"
 	"context"
-	"fmt"
+	"errors"
 	"time"
 )
 
@@ -46,16 +47,21 @@ func Monitor(ctx context.Context, override string, refresh <-chan struct{}, upda
 		}
 	}
 }
-func (s Snapshot) Status() string {
+func (s Snapshot) Status(language string) string {
 	if s.Error != nil {
-		return fmt.Sprintf("%s. Повтор через %.0f с", s.Error, s.Next.Seconds())
+		var message i18n.MessageError = "codexRead"
+		_ = errors.As(s.Error, &message)
+		return i18n.Text(language, string(message)) + " · " + i18n.Text(language, "retry", s.Next.Seconds())
 	}
-	return "Обновлено " + s.Updated.Format("15:04:05") + " · запрос каждые 30 с"
+	return i18n.Text(language, "updated", s.Updated.Format("15:04:05"))
 }
-func (s Snapshot) Diagnostic() string {
-	state := "Успешный запрос"
+
+func (s Snapshot) Diagnostic(language string) string {
+	state := i18n.Text(language, "requestOK")
 	if s.Error != nil {
-		state = s.Error.Error()
+		state = i18n.ErrorText(language, s.Error)
 	}
-	return "Codex: " + s.Path + "\n\n" + state + "\nПоследняя попытка: " + s.Updated.Format("02.01.2006 15:04:05") + "\nЛокальный путь может содержать имя пользователя — скройте его перед публикацией."
+	return "Codex: " + s.Path + "\n\n" + state + "\n" +
+		i18n.Text(language, "lastAttempt", s.Updated.Format("2006-01-02 15:04:05")) + "\n" +
+		i18n.Text(language, "privacy")
 }

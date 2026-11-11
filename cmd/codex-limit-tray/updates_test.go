@@ -162,7 +162,7 @@ func TestUpdatesThroughSignedDownload(t *testing.T) {
 				}
 			}
 			if scenario.portable {
-				tap("Проверить обновления")
+				tap("Check for updates")
 			} else {
 				c.check(true)
 			}
@@ -171,7 +171,7 @@ func TestUpdatesThroughSignedDownload(t *testing.T) {
 				if c.busy || *requests != 1 || launches != 0 || last.Stage != ui.UpdateCurrent || last.Notes != "Release notes" {
 					t.Fatalf("portable updated without consent or lost notes: %+v", last)
 				}
-				tap("Скачать и установить программу")
+				tap("Install app")
 			}
 			if !scenario.portable && scenario.version == update.Version {
 				if c.busy || last.Stage != ui.UpdateCurrent || last.CanInstall || last.Notes != "Release notes" || *requests != 1 {
@@ -180,10 +180,10 @@ func TestUpdatesThroughSignedDownload(t *testing.T) {
 			} else {
 				workers.Wait() // verified download has completed; OS launch still awaits UI dispatch
 				if scenario.optOut {
-					tap("Автоматически устанавливать обновления при запуске")
+					tap("Auto-install updates at startup")
 				}
 				complete()
-				if *requests != 3 || scenario.badSignature && (last.Stage != ui.UpdateError || !strings.Contains(last.Message, "подпись")) {
+				if *requests != 3 || scenario.badSignature && (last.Stage != ui.UpdateError || !strings.Contains(last.Message, "signature")) {
 					t.Fatalf("unexpected download outcome: requests=%d, state=%+v", *requests, last)
 				}
 			}

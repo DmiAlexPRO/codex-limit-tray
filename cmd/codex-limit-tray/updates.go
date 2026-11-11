@@ -56,7 +56,7 @@ func (c *updateController) check(automatic bool) {
 func (c *updateController) result() ui.UpdateState {
 	r := c.release
 	if r == nil {
-		return ui.UpdateState{Stage: ui.UpdateIdle, Message: "Для этой версии пока нет подходящего выпуска на GitHub."}
+		return ui.UpdateState{Stage: ui.UpdateIdle, MessageKey: "noRelease"}
 	}
 	s := ui.UpdateState{Stage: ui.UpdateCurrent, Version: r.Version, Notes: r.Notes}
 	if !r.IsNewer() && c.installed {
@@ -68,16 +68,16 @@ func (c *updateController) result() ui.UpdateState {
 	switch {
 	case runtime.GOOS != "windows" || runtime.GOARCH != "amd64":
 		if r.IsNewer() {
-			s.Message = "Новая версия доступна на GitHub. На этой платформе требуется ручная установка."
+			s.MessageKey = "manualInstall"
 		}
 	case !r.HasInstaller():
-		s.Message = "В этом выпуске нет комплекта для проверенной установки Windows."
+		s.MessageKey = "noInstaller"
 	case !update.InstallKeyConfigured():
-		s.Message = "Сборка без доверенного ключа: установка из приложения отключена."
+		s.MessageKey = "noKey"
 	default:
 		s.CanInstall = true
 		if !r.IsNewer() {
-			s.Message = "Переносная версия актуальна. Можно установить её для текущего пользователя."
+			s.MessageKey = "portableCurrent"
 		}
 	}
 	return s
@@ -89,7 +89,7 @@ func (c *updateController) install(automatic bool) {
 	}
 	c.busy = true
 	state := c.result()
-	state.Stage, state.CanInstall = ui.UpdateInstalling, false
+	state.Stage, state.CanInstall, state.MessageKey = ui.UpdateInstalling, false, ""
 	c.render(state)
 	download := update.Download
 	if !c.installed {
@@ -123,7 +123,7 @@ func (c *updateController) install(automatic bool) {
 			if err != nil {
 				discard()
 				state := c.result()
-				state.Stage, state.Message = ui.UpdateError, err.Error()
+				state.Stage, state.Message, state.MessageKey = ui.UpdateError, err.Error(), ""
 				c.render(state)
 				return
 			}
