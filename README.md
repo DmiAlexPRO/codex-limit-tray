@@ -17,7 +17,7 @@ Free under the [MIT License](LICENSE). Requires a local Codex installation signe
 
 ![Four tray icon styles — numbers, bars, segments and rings — with sample quotas: 82% remaining in the five-hour window and 57% in the weekly window.](docs/images/tray-modes.en.png)
 
-The app has **20 interface languages**. It uses a supported system language on installation or first launch and falls back to English. To choose another language, open the gear → **Appearance → Language**, select it, and restart Codex Limit Tray. [Supported languages](docs/releases/v3.1.0.md#languages).
+The app has **19 interface languages**. It uses a supported system language on installation or first launch and falls back to English. To choose another language, open the gear → **Appearance → Language**, select it, and restart Codex Limit Tray. [Supported languages](docs/releases/v3.1.0.md#languages).
 
 ![English](https://img.shields.io/badge/English-EN-2F7668)
 ![Simplified Chinese](https://img.shields.io/badge/%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87-ZH-2F7668)
@@ -36,7 +36,6 @@ The app has **20 interface languages**. It uses a supported system language on i
 ![Egyptian Arabic](https://img.shields.io/badge/%D8%A7%D9%84%D8%B9%D8%B1%D8%A8%D9%8A%D8%A9%20%D8%A7%D9%84%D9%85%D8%B5%D8%B1%D9%8A%D8%A9-ARZ-2F7668)
 ![Marathi](https://img.shields.io/badge/%E0%A4%AE%E0%A4%B0%E0%A4%BE%E0%A4%A0%E0%A5%80-MR-2F7668)
 ![Vietnamese](https://img.shields.io/badge/Ti%E1%BA%BFng%20Vi%E1%BB%87t-VI-2F7668)
-![Telugu](https://img.shields.io/badge/%E0%B0%A4%E0%B1%86%E0%B0%B2%E0%B1%81%E0%B0%97%E0%B1%81-TE-2F7668)
 ![Swahili](https://img.shields.io/badge/Kiswahili-SW-2F7668)
 ![Hausa](https://img.shields.io/badge/Hausa-HA-2F7668)
 

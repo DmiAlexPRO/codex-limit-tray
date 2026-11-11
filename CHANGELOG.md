@@ -2,7 +2,7 @@
 
 This file records user-facing changes. Release versions follow Semantic Versioning.
 
-## 3.1.0 — 20 interface languages
+## 3.1.0 — 19 interface languages
 
 - Localized the dashboard, settings, tray menu, quota labels, connection status and update screens.
 - Added a saved language preference under **Appearance → Language**. The change takes effect after restarting.

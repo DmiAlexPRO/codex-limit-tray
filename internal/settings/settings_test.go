@@ -91,6 +91,7 @@ func TestLanguageMigration(t *testing.T) {
 	}{
 		{`{"threshold":42}`, "ru"},
 		{`{"threshold":42,"language":"future"}`, "ru"},
+		{`{"threshold":42,"language":"te"}`, "ru"},
 		{`{"threshold":42,"language":"ar"}`, "ar"},
 	} {
 		if err := os.WriteFile(path, []byte(tc.json), 0600); err != nil {

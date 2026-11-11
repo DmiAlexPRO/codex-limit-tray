@@ -26,7 +26,7 @@ func Languages() []Language {
 		{"bn", "বাংলা"}, {"pt", "Português"}, {"id", "Bahasa Indonesia"},
 		{"ur", "اردو"}, {"ru", "Русский"}, {"de", "Deutsch"},
 		{"ja", "日本語"}, {"pcm", "Naijá"}, {"arz", "العربية المصرية"},
-		{"mr", "मराठी"}, {"vi", "Tiếng Việt"}, {"te", "తెలుగు"},
+		{"mr", "मराठी"}, {"vi", "Tiếng Việt"},
 		{"sw", "Kiswahili"}, {"ha", "Hausa"},
 	}
 }

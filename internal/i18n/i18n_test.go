@@ -9,8 +9,8 @@ import (
 )
 
 func TestCatalogs(t *testing.T) {
-	if len(catalogs) != 20 || len(Languages()) != 20 {
-		t.Fatalf("want 20 unique languages, got %d", len(catalogs))
+	if len(catalogs) != 19 || len(Languages()) != 19 {
+		t.Fatalf("want 19 unique languages, got %d", len(catalogs))
 	}
 	format := regexp.MustCompile(`%[^% ]*?[dfs]`)
 	names := make(map[string]bool)
@@ -52,6 +52,7 @@ func TestMatch(t *testing.T) {
 		{[]string{"zh-Hant-HK", "ja-JP"}, "ja"},
 		{[]string{"pcm-NG"}, "pcm"},
 		{[]string{"ur-PK", "ar"}, "ur"},
+		{[]string{"te-IN"}, "en"},
 		{[]string{"zz-ZZ"}, "en"},
 	} {
 		if got := Match(tc.tags...); got != tc.want {

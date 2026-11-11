@@ -31,7 +31,7 @@ func TestLanguageSelection(t *testing.T) {
 	control, notice := v.languageSelector()
 	w.SetContent(control)
 	w.Show()
-	if control.Selected != "English" || len(control.Options) != 20 || notice.Visible() {
+	if control.Selected != "English" || len(control.Options) != 19 || notice.Visible() {
 		t.Fatal("incorrect initial language selector")
 	}
 	test.Tap(control)
