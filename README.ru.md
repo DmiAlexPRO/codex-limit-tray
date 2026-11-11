@@ -6,6 +6,13 @@
 
 **[Скачать для Windows · установщик x64](https://github.com/DmiAlexPRO/codex-limit-tray/releases/latest/download/CodexLimitTray-windows-x64-Setup.exe)** · [Все выпуски и переносные версии](https://github.com/DmiAlexPRO/codex-limit-tray/releases)
 
+Скачивания за все выпуски на GitHub:
+
+[![Скачивания: Установщик Windows](https://img.shields.io/github/downloads/DmiAlexPRO/codex-limit-tray/CodexLimitTray-windows-x64-Setup.exe?displayAssetName=false&label=%D0%A3%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D1%89%D0%B8%D0%BA%20Windows)](https://github.com/DmiAlexPRO/codex-limit-tray/releases)
+[![Скачивания: Переносная версия Windows](https://img.shields.io/github/downloads/DmiAlexPRO/codex-limit-tray/CodexLimitTray-windows-x64.zip?displayAssetName=false&label=%D0%9F%D0%B5%D1%80%D0%B5%D0%BD%D0%BE%D1%81%D0%BD%D0%B0%D1%8F%20%D0%B2%D0%B5%D1%80%D1%81%D0%B8%D1%8F%20Windows)](https://github.com/DmiAlexPRO/codex-limit-tray/releases)
+[![Скачивания: macOS arm64](https://img.shields.io/github/downloads/DmiAlexPRO/codex-limit-tray/CodexLimitTray-macOS-arm64.zip?displayAssetName=false&label=macOS%20arm64)](https://github.com/DmiAlexPRO/codex-limit-tray/releases)
+[![Скачивания: macOS x86_64](https://img.shields.io/github/downloads/DmiAlexPRO/codex-limit-tray/CodexLimitTray-macOS-x86_64.zip?displayAssetName=false&label=macOS%20x86_64)](https://github.com/DmiAlexPRO/codex-limit-tray/releases)
+
 Бесплатный инструмент с открытым кодом под [лицензией MIT](LICENSE). Интерфейс на **русском языке**. Нужен установленный Codex со входом через поддерживаемую подписку ChatGPT. Проект независимый и не связан с OpenAI: он показывает **лимиты подписки Codex**, а не общие лимиты ChatGPT и не расходы на API.
 
 ![Четыре варианта значка в трее — цифры, бары, сегменты и кольца — на примере одних и тех же данных: осталось 82% пятичасового лимита и 57% недельного.](docs/images/tray-modes.png)
