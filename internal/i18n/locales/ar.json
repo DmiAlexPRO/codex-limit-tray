@@ -73,6 +73,8 @@
   "available": "يتوفر تحديث.",
   "installing": "جارٍ التحضير للتثبيت. سيعاد تشغيل التطبيق.",
   "updateError": "تعذر تحديث التطبيق. حاول مرة أخرى.",
+  "updateRateLimited": "قيّد GitHub التحقق من التحديثات مؤقتًا. حاول بعد %s.",
+  "openReleasePage": "افتح صفحة الإصدار",
   "notChecked": "لم يُتحقق بعد.",
   "noRelease": "لا يوجد إصدار مطابق على GitHub بعد.",
   "manualInstall": "ثبّت الإصدار الجديد يدويًا من GitHub Releases.",

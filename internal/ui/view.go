@@ -32,6 +32,7 @@ type View struct {
 	windows        []quota.Window
 	lastSuccessful []quota.Window
 	status         string
+	statusText     func(string) (string, string)
 	dashboard      *fyne.Container
 	diagnostic     *widget.Label
 	content        *fyne.Container
@@ -69,12 +70,16 @@ func NewView(a fyne.App, w fyne.Window, s settings.Settings, refresh, exit func(
 	w.SetCloseIntercept(w.Hide)
 	w.Resize(fyne.NewSize(420, 600))
 	v.mainPage = dashboardPage(v.dashboard, v.language, v.refresh, v.ShowWidget)
-	v.settingsPage = container.NewAppTabs(
-		container.NewTabItem(tr("appearance"), v.preferences()),
-		container.NewTabItem(tr("connection"), v.connection()),
-	)
+	v.buildSettingsPage()
 	v.showMain()
 	return v
+}
+
+func (v *View) buildSettingsPage() {
+	v.settingsPage = container.NewAppTabs(
+		container.NewTabItem(v.tr("appearance"), v.preferences()),
+		container.NewTabItem(v.tr("connection"), v.connection()),
+	)
 }
 
 func (v *View) tr(key string, args ...any) string { return i18n.Text(v.language, key, args...) }
@@ -100,6 +105,11 @@ func (v *View) ShowSettings() {
 }
 
 func (v *View) Update(windows []quota.Window, status, diagnostic string) {
+	v.UpdateLocalized(windows, func(string) (string, string) { return status, diagnostic })
+}
+
+// UpdateLocalized keeps the latest status available in the next selected language.
+func (v *View) UpdateLocalized(windows []quota.Window, statusText func(string) (string, string)) {
 	if v.settings.SoundEnabled && quota.CrossedThreshold(v.lastSuccessful, windows, v.settings.Threshold) {
 		platform.Sound()
 	}
@@ -107,9 +117,20 @@ func (v *View) Update(windows []quota.Window, status, diagnostic string) {
 		v.lastSuccessful = append([]quota.Window(nil), windows...)
 	}
 	v.windows = windows
+	v.statusText = statusText
+	v.localizeStatus()
+	v.render()
+}
+
+func (v *View) localizeStatus() {
+	if v.statusText == nil {
+		v.status = v.tr("waiting")
+		v.diagnostic.SetText(v.tr("diagnosticEmpty"))
+		return
+	}
+	status, diagnostic := v.statusText(v.language)
 	v.status = status
 	v.diagnostic.SetText(diagnostic)
-	v.render()
 }
 
 func (v *View) render() {
@@ -204,7 +225,7 @@ func highButton(label string, icon fyne.Resource, action func()) *widget.Button 
 
 func (v *View) preferences() fyne.CanvasObject {
 	tr := func(key string) string { return v.tr(key) }
-	language, restartNotice := v.languageSelector()
+	language := v.languageSelector()
 
 	themeValues := []string{"system", "light", "dark"}
 	styles := []string{"numbers", "bars", "segments", "rings"}
@@ -301,7 +322,7 @@ func (v *View) preferences() fyne.CanvasObject {
 		widget.NewFormItem(tr("threshold"), container.NewBorder(nil, nil, nil, thresholdValue, threshold)),
 	)
 	note := wrapped(tr("autosave"))
-	content := container.NewVBox(text(tr("settings"), 24, true), form, restartNotice, enabled, sound, autoStart, note, container.NewHBox(preview, wrapped(tr("preview"))))
+	content := container.NewVBox(text(tr("settings"), 24, true), form, enabled, sound, autoStart, note, container.NewHBox(preview, wrapped(tr("preview"))))
 	for _, item := range v.trayVisibilityHelp(runtime.GOOS) {
 		content.Add(item)
 	}
@@ -325,7 +346,7 @@ func (v *View) trayVisibilityHelp(goos string) []fyne.CanvasObject {
 	}
 }
 
-func (v *View) languageSelector() (*widget.Select, *widget.Label) {
+func (v *View) languageSelector() *widget.Select {
 	languages := i18n.Languages()
 	names := make([]string, 0, len(languages))
 	codes := make([]string, 0, len(languages))
@@ -334,8 +355,6 @@ func (v *View) languageSelector() (*widget.Select, *widget.Label) {
 		codes = append(codes, language.Code)
 	}
 	selectLanguage := localizedSelect(v.tr("language"), names, indexOf(codes, v.settings.Language))
-	notice := wrapped(v.tr("restart"))
-	notice.Hide()
 	selectLanguage.OnChanged = func(name string) {
 		next := v.settings
 		next.Language = codes[indexOf(names, name)]
@@ -348,14 +367,35 @@ func (v *View) languageSelector() (*widget.Select, *widget.Label) {
 			v.showSaveError(err)
 			return
 		}
-		v.settings = next
-		if next.Language == v.language {
-			notice.Hide()
-		} else {
-			notice.Show()
-		}
+		v.applyLanguage(next)
 	}
-	return selectLanguage, notice
+	return selectLanguage
+}
+
+func (v *View) applyLanguage(next settings.Settings) {
+	v.settings = next
+	v.language = next.Language
+	v.localizeStatus()
+	v.resets.language = next.Language
+	v.resets.button.SetText(v.tr("earnedResetUse"))
+	v.resets.render()
+	v.mainPage = dashboardPage(v.dashboard, v.language, v.refresh, v.ShowWidget)
+	if v.compact != nil {
+		v.compact.SetTitle("Codex · " + v.tr("widget"))
+	}
+	selected := v.settingsPage.SelectedIndex()
+	v.buildSettingsPage()
+	if p := v.updates; p != nil {
+		v.ConfigureUpdates(p.currentVersion, p.installed, p.check.OnTapped, p.install.OnTapped)
+		v.SetUpdateState(p.state)
+	}
+	v.settingsPage.SelectIndex(selected)
+	v.render()
+	if v.onSettings {
+		v.ShowSettings()
+		return
+	}
+	v.showMain()
 }
 
 func (v *View) connection() fyne.CanvasObject {

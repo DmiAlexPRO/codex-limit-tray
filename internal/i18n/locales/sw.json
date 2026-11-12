@@ -73,6 +73,8 @@
   "available": "Sasisho linapatikana.",
   "installing": "Inaandaa usakinishaji. Programu itaanza tena.",
   "updateError": "Imeshindwa kusasisha programu. Jaribu tena.",
+  "updateRateLimited": "GitHub imezuia ukaguzi wa masasisho kwa muda. Jaribu tena baada ya %s.",
+  "openReleasePage": "Fungua ukurasa wa toleo",
   "notChecked": "Bado haijakaguliwa.",
   "noRelease": "Hakuna toleo linalolingana kwenye GitHub bado.",
   "manualInstall": "Sakinisha toleo jipya mwenyewe kutoka GitHub Releases.",

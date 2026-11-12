@@ -73,6 +73,8 @@
   "available": "Akwai sabuntawa.",
   "installing": "Ana shirya shigarwa. Manhajar za ta sake farawa.",
   "updateError": "An kasa sabunta manhaja. Sake gwadawa.",
+  "updateRateLimited": "GitHub ya takaita duba sabuntawa na ɗan lokaci. Sake gwadawa bayan %s.",
+  "openReleasePage": "Buɗe shafin sigar",
   "notChecked": "Ba a duba ba tukuna.",
   "noRelease": "Babu siga mai dacewa a GitHub tukuna.",
   "manualInstall": "Shigar da sabuwar siga da kanka daga GitHub Releases.",

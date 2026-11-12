@@ -73,6 +73,8 @@
   "available": "Có bản cập nhật.",
   "installing": "Đang chuẩn bị cài đặt. Ứng dụng sẽ khởi động lại.",
   "updateError": "Không cập nhật được ứng dụng. Hãy thử lại.",
+  "updateRateLimited": "GitHub tạm giới hạn việc kiểm tra cập nhật. Hãy thử lại sau %s.",
+  "openReleasePage": "Mở trang bản phát hành",
   "notChecked": "Chưa kiểm tra.",
   "noRelease": "Chưa có bản phát hành phù hợp trên GitHub.",
   "manualInstall": "Cài bản mới thủ công từ GitHub Releases.",

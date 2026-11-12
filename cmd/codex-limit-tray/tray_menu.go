@@ -6,6 +6,12 @@ import (
 	"fyne.io/fyne/v2"
 )
 
+func trayMenuUpdater(setMenu func(*fyne.Menu), show, refresh, showWidget, openSettings, exit func()) func(string) {
+	return func(language string) {
+		setMenu(newTrayMenu(language, show, refresh, showWidget, openSettings, exit))
+	}
+}
+
 func newTrayMenu(language string, show, refresh, showWidget, openSettings, exit func()) *fyne.Menu {
 	item := func(key string, action func()) *fyne.MenuItem {
 		return fyne.NewMenuItem(i18n.Text(language, key), action)

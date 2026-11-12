@@ -73,6 +73,8 @@
   "available": "فيه تحديث جديد.",
   "installing": "بيجهّز التثبيت. التطبيق هيفتح تاني.",
   "updateError": "مقدرش يحدّث التطبيق. جرّب تاني.",
+  "updateRateLimited": "GitHub وقّف التحقق من التحديثات مؤقتًا. جرّب بعد %s.",
+  "openReleasePage": "افتح صفحة الإصدار",
   "notChecked": "لسه ما شافش التحديثات.",
   "noRelease": "لسه مفيش إصدار مناسب على GitHub.",
   "manualInstall": "ثبّت الإصدار الجديد بنفسك من GitHub Releases.",

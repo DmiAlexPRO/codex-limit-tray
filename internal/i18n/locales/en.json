@@ -85,6 +85,8 @@
   "available": "An update is available.",
   "installing": "Preparing installation. The app will restart.",
   "updateError": "Could not update the app. Try again.",
+  "updateRateLimited": "GitHub temporarily limited update checks. Try again after %s.",
+  "openReleasePage": "Open release page",
   "notChecked": "Not checked yet.",
   "noRelease": "No matching GitHub release yet.",
   "manualInstall": "Install the new version manually from GitHub Releases.",

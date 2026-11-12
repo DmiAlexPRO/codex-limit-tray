@@ -59,8 +59,6 @@ func main() {
 	if pathErr != nil {
 		warning = pathErr
 	}
-	language := s.Language
-	tr := func(key string) string { return i18n.Text(language, key) }
 	if !*demo && s.AutoStart && platform.AutoStartSupported() {
 		// Refresh the executable location when a portable build has been moved.
 		if err := platform.SetAutoStart(true); err != nil {
@@ -98,7 +96,9 @@ func main() {
 		cancel = stop
 		resetRequests := make(chan struct{}, 1)
 		view.ConfigureReset(func() { resetRequests <- struct{}{} })
-		view.Update(nil, tr("connecting"), tr("waitingReply"))
+		view.UpdateLocalized(nil, func(language string) (string, string) {
+			return i18n.Text(language, "connecting"), i18n.Text(language, "waitingReply")
+		})
 		override := s.CodexPath
 		workers.Add(1)
 		go func() {
@@ -107,16 +107,16 @@ func main() {
 				fyne.Do(func() {
 					if current == generation && ctx.Err() == nil {
 						view.SetResetCredits(snapshot.ResetCredits, snapshot.ResetMessage)
-						view.Update(snapshot.Windows, snapshot.Status(language), snapshot.Diagnostic(language))
+						view.UpdateLocalized(snapshot.Windows, func(language string) (string, string) {
+							return snapshot.Status(language), snapshot.Diagnostic(language)
+						})
 					}
 				})
 			})
 		}()
 	}
+	updateTrayMenu := func(string) {}
 	view = ui.NewView(a, w, s, request, exit, func(next settings.Settings) error {
-		if *demo && s.Language != next.Language {
-			return i18n.MessageError("demoOffline")
-		}
 		autoStartChanged := s.AutoStart != next.AutoStart
 		if !*demo {
 			if pathErr != nil {
@@ -134,8 +134,12 @@ func main() {
 				return err
 			}
 		}
+		languageChanged := s.Language != next.Language
 		changed := s.CodexPath != next.CodexPath
 		s = next
+		if languageChanged {
+			updateTrayMenu(s.Language)
+		}
 		if changed {
 			start()
 		}
@@ -165,17 +169,22 @@ func main() {
 	a.SetIcon(ui.IconResource(nil, s))
 	if desk, ok := a.(desktop.App); ok {
 		openSettings := func() { view.ShowSettings(); show() }
-		desk.SetSystemTrayMenu(newTrayMenu(s.Language, show, request, view.ShowWidget, openSettings, exit))
+		updateTrayMenu = trayMenuUpdater(desk.SetSystemTrayMenu, show, request, view.ShowWidget, openSettings, exit)
+		updateTrayMenu(s.Language)
 		desk.SetSystemTrayIcon(ui.IconResource(nil, s))
 		systray.SetOnTapped(func() { fyne.Do(show) })
 	}
 	if *demo {
-		view.Update([]quota.Window{{Remaining: 57, Minutes: 10080, Reset: time.Now().Add(5 * 24 * time.Hour)}}, tr("demo"), tr("demoOffline"))
+		view.UpdateLocalized([]quota.Window{{Remaining: 57, Minutes: 10080, Reset: time.Now().Add(5 * 24 * time.Hour)}}, func(language string) (string, string) {
+			return i18n.Text(language, "demo"), i18n.Text(language, "demoOffline")
+		})
 	} else {
 		start()
 	}
 	if warning != nil {
-		view.Update(nil, tr("settingsWarning"), warning.Error())
+		view.UpdateLocalized(nil, func(language string) (string, string) {
+			return i18n.Text(language, "settingsWarning"), i18n.ErrorText(language, warning)
+		})
 	}
 	if !*minimized {
 		show()

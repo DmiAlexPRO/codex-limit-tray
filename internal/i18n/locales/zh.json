@@ -73,6 +73,8 @@
   "available": "有可用更新。",
   "installing": "正在准备安装。应用将重启。",
   "updateError": "无法更新应用，请重试。",
+  "updateRateLimited": "GitHub 暂时限制了更新检查。请在 %s 之后重试。",
+  "openReleasePage": "打开发行页面",
   "notChecked": "尚未检查。",
   "noRelease": "GitHub 上暂无匹配的版本。",
   "manualInstall": "请从 GitHub Releases 手动安装新版本。",

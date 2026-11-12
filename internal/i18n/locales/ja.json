@@ -73,6 +73,8 @@
   "available": "更新があります。",
   "installing": "インストールを準備中です。アプリは再起動します。",
   "updateError": "更新できませんでした。もう一度お試しください。",
+  "updateRateLimited": "GitHub が更新確認を一時的に制限しています。%s 以降にもう一度お試しください。",
+  "openReleasePage": "リリースページを開く",
   "notChecked": "まだ確認していません。",
   "noRelease": "該当するリリースが GitHub にまだありません。",
   "manualInstall": "GitHub Releases から新版を手動でインストールしてください。",

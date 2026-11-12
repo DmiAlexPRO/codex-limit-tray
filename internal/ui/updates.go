@@ -1,11 +1,14 @@
 package ui
 
 import (
+	"net/url"
 	"runtime"
 	"strings"
+	"time"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 )
@@ -23,12 +26,14 @@ const (
 
 // UpdateState is a display snapshot. The caller owns network and installer operations.
 type UpdateState struct {
-	Stage      UpdateStage
-	Version    string
-	Notes      string
-	Message    string // technical detail, if available
-	MessageKey string
-	CanInstall bool
+	Stage       UpdateStage
+	Version     string
+	Notes       string
+	Message     string // technical detail, if available
+	MessageKey  string
+	CanInstall  bool
+	RetryAt     time.Time
+	ReleasePage *url.URL
 }
 
 type updatePanel struct {
@@ -36,16 +41,27 @@ type updatePanel struct {
 	status, version *widget.Label
 	notes           *widget.Label
 	check, install  *widget.Button
+	openRelease     *widget.Button
 	automatic       *widget.Check
 	installed       bool
+	currentVersion  string
+	state           UpdateState
 }
 
 // ConfigureUpdates adds the settings tab. Nil callbacks mean the corresponding
 // action is unavailable (for example in demo mode).
 func (v *View) ConfigureUpdates(currentVersion string, installed bool, check, install func()) {
-	p := &updatePanel{status: wrapped(""), version: wrapped(""), notes: wrapped(""), installed: installed}
+	p := &updatePanel{status: wrapped(""), version: wrapped(""), notes: wrapped(""), installed: installed, currentVersion: currentVersion}
 	v.updates = p
 	p.check = widget.NewButtonWithIcon(v.tr("checkUpdates"), theme.ViewRefreshIcon(), check)
+	p.openRelease = widget.NewButton(v.tr("openReleasePage"), func() {
+		if p.state.ReleasePage == nil {
+			return
+		}
+		if err := v.app.OpenURL(p.state.ReleasePage); err != nil {
+			dialog.ShowError(err, v.window)
+		}
+	})
 	p.install = highButton(v.tr("installUpdate"), theme.DownloadIcon(), install)
 	if !installed {
 		p.install.SetText(v.tr("installApp"))
@@ -73,7 +89,7 @@ func (v *View) ConfigureUpdates(currentVersion string, installed bool, check, in
 	p.tab = container.NewTabItem(v.tr("updates"), container.NewVScroll(container.NewVBox(
 		text(v.tr("appUpdates"), 22, true),
 		wrapped(v.tr("currentVersion", currentVersion)), p.version, p.status,
-		p.install, p.check, widget.NewSeparator(), p.automatic, wrapped(note),
+		p.install, p.openRelease, p.check, widget.NewSeparator(), p.automatic, wrapped(note),
 		p.notes,
 	)))
 	v.settingsPage.Append(p.tab)
@@ -95,8 +111,11 @@ func (v *View) SetUpdateState(s UpdateState) {
 	if p == nil {
 		return
 	}
+	p.state = s
 	message := ""
-	if s.MessageKey != "" {
+	if !s.RetryAt.IsZero() {
+		message = v.tr("updateRateLimited", s.RetryAt.Local().Format("2006-01-02 15:04:05 MST"))
+	} else if s.MessageKey != "" {
 		message = v.tr(s.MessageKey)
 	} else {
 		switch s.Stage {
@@ -118,6 +137,11 @@ func (v *View) SetUpdateState(s UpdateState) {
 		message += "\n\n" + s.Message
 	}
 	p.status.SetText(message)
+	if s.ReleasePage != nil {
+		p.openRelease.Show()
+	} else {
+		p.openRelease.Hide()
+	}
 	showUpdateText(p.version, v.tr("releaseVersion", s.Version), s.Version != "")
 	// GitHub release notes are untrusted. Use a plain label, never rich Markdown or embedded resources.
 	showUpdateText(p.notes, v.tr("releaseNotes")+"\n\n"+s.Notes, strings.TrimSpace(s.Notes) != "")

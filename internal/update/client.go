@@ -12,7 +12,9 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 	"unicode"
@@ -184,6 +186,39 @@ func (c client) check(ctx context.Context) (*Release, error) {
 
 var errNotFound = errors.New("file or release not found on GitHub")
 
+// RateLimitError tells the caller when it can retry a GitHub metadata check.
+type RateLimitError struct {
+	RetryAt     time.Time
+	ReleasePage *url.URL
+}
+
+func (e *RateLimitError) Error() string { return "GitHub API rate limit reached" }
+
+func retryAt(headers http.Header, now time.Time) time.Time {
+	var latest time.Time
+	epoch, err := strconv.ParseInt(headers.Get("X-RateLimit-Reset"), 10, 64)
+	if headers.Get("X-RateLimit-Remaining") == "0" && err == nil && epoch > 0 {
+		latest = time.Unix(epoch, 0)
+	}
+	retry := headers.Get("Retry-After")
+	if delay, err := strconv.ParseInt(retry, 10, 64); err == nil && delay > 0 && delay <= (1<<63-1)/int64(time.Second) {
+		latest = laterTime(latest, now.Add(time.Duration(delay)*time.Second))
+	} else if date, err := http.ParseTime(retry); err == nil {
+		latest = laterTime(latest, date)
+	}
+	if !latest.After(now) {
+		return now.Add(time.Minute)
+	}
+	return latest
+}
+
+func laterTime(a, b time.Time) time.Time {
+	if b.After(a) {
+		return b
+	}
+	return a
+}
+
 func (c client) get(ctx context.Context, endpoint string, limit int64) (*http.Response, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint, nil)
 	if err != nil {
@@ -199,6 +234,14 @@ func (c client) get(ctx context.Context, endpoint string, limit int64) (*http.Re
 	}
 	if resp.StatusCode != http.StatusOK {
 		resp.Body.Close()
+		limited := resp.StatusCode == http.StatusTooManyRequests ||
+			(resp.StatusCode == http.StatusForbidden && (resp.Header.Get("X-RateLimit-Remaining") == "0" || resp.Header.Get("Retry-After") != ""))
+		if req.URL.Host == "api.github.com" && limited {
+			return nil, &RateLimitError{
+				RetryAt:     retryAt(resp.Header, time.Now()),
+				ReleasePage: &url.URL{Scheme: "https", Host: "github.com", Path: strings.TrimPrefix(req.URL.Path, "/repos")},
+			}
+		}
 		if resp.StatusCode == http.StatusNotFound {
 			return nil, errNotFound
 		}
