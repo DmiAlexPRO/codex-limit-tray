@@ -38,12 +38,14 @@ type updatePanel struct {
 	check, install  *widget.Button
 	automatic       *widget.Check
 	installed       bool
+	currentVersion  string
+	state           UpdateState
 }
 
 // ConfigureUpdates adds the settings tab. Nil callbacks mean the corresponding
 // action is unavailable (for example in demo mode).
 func (v *View) ConfigureUpdates(currentVersion string, installed bool, check, install func()) {
-	p := &updatePanel{status: wrapped(""), version: wrapped(""), notes: wrapped(""), installed: installed}
+	p := &updatePanel{status: wrapped(""), version: wrapped(""), notes: wrapped(""), installed: installed, currentVersion: currentVersion}
 	v.updates = p
 	p.check = widget.NewButtonWithIcon(v.tr("checkUpdates"), theme.ViewRefreshIcon(), check)
 	p.install = highButton(v.tr("installUpdate"), theme.DownloadIcon(), install)
@@ -95,6 +97,7 @@ func (v *View) SetUpdateState(s UpdateState) {
 	if p == nil {
 		return
 	}
+	p.state = s
 	message := ""
 	if s.MessageKey != "" {
 		message = v.tr(s.MessageKey)

@@ -5,6 +5,8 @@ import (
 	"testing"
 
 	"codexlimittray/internal/i18n"
+
+	"fyne.io/fyne/v2"
 )
 
 func TestTrayMenu(t *testing.T) {
@@ -36,6 +38,25 @@ func TestTrayMenu(t *testing.T) {
 				t.Fatalf("wrong tray action mapping: %v", called)
 			}
 		})
+	}
+}
+
+func TestTrayMenuUpdatesWithoutRestart(t *testing.T) {
+	var menu *fyne.Menu
+	quitCalls := 0
+	action := func() {}
+	updateMenu := trayMenuUpdater(func(next *fyne.Menu) { menu = next }, action, action, action, action, func() { quitCalls++ })
+	updateMenu("en")
+	if menu == nil || len(menu.Items) != 6 || menu.Items[3].Label != "Settings" {
+		t.Fatal("initial menu not installed")
+	}
+	updateMenu("ru")
+	if menu == nil || len(menu.Items) != 6 || menu.Items[3].Label != "Настройки" || !menu.Items[5].IsQuit {
+		t.Fatal("localized tray menu not installed")
+	}
+	menu.Items[5].Action()
+	if quitCalls != 1 {
+		t.Fatal("quit action lost on language change")
 	}
 }
 

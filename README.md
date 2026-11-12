@@ -17,7 +17,7 @@ Free under the [MIT License](LICENSE). Requires a local Codex installation signe
 
 ![Four tray icon styles — numbers, bars, segments and rings — with sample quotas: 82% remaining in the five-hour window and 57% in the weekly window.](docs/images/tray-modes.en.png)
 
-The app has **27 interface languages**. It uses a supported system language on installation or first launch and falls back to English. To choose another language, open the gear → **Appearance → Language**, select it, and restart Codex Limit Tray.
+The app has **27 interface languages**. It uses a supported system language on installation or first launch and falls back to English. To choose another language, open the gear → **Appearance → Language**, and select it. The interface and tray menu update immediately.
 
 ![English](https://img.shields.io/badge/English-EN-2F7668)
 ![Simplified Chinese](https://img.shields.io/badge/%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87-ZH-2F7668)

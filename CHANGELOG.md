@@ -2,6 +2,12 @@
 
 This file records user-facing changes. Release versions follow Semantic Versioning.
 
+## 3.4.2 — Switch languages without restarting
+
+- Apply the selected language immediately to the main window, settings and tray menu.
+
+See the [3.4.2 release notes](docs/releases/v3.4.2.md).
+
 ## 3.4.1 — Clearer tray menu
 
 - Removed the duplicate Quit entry and clarified the tray action labels.

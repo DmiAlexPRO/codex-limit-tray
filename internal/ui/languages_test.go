@@ -29,10 +29,15 @@ func TestLanguageSelection(t *testing.T) {
 		return next.Save(path)
 	}
 	v := NewView(a, w, s, func() {}, func() {}, save)
-	control, notice := v.languageSelector()
-	w.SetContent(control)
+	v.ConfigureUpdates("3.4.1", true, func() {}, func() {})
+	v.SetUpdateState(UpdateState{Stage: UpdateAvailable, Version: "3.4.2", CanInstall: true})
+	v.UpdateLocalized(nil, func(language string) (string, string) {
+		return i18n.Text(language, "connecting"), i18n.Text(language, "waitingReply")
+	})
+	v.ShowSettings()
 	w.Show()
-	if control.Selected != "English" || len(control.Options) != 27 || notice.Visible() {
+	control := findForm(v.settingsPage.Selected().Content).Items[0].Widget.(*widget.Select)
+	if control.Selected != "English" || len(control.Options) != 27 {
 		t.Fatal("incorrect initial language selector")
 	}
 	test.Tap(control)
@@ -43,12 +48,20 @@ func TestLanguageSelection(t *testing.T) {
 	popup.TypedKey(&fyne.KeyEvent{Name: fyne.KeyUp})
 	popup.TypedKey(&fyne.KeyEvent{Name: fyne.KeyReturn})
 	saved, err := settings.Load(path, "en")
-	if err != nil || saved.Language != "hy" || !notice.Visible() || v.language != "en" {
-		t.Fatalf("selection was not saved for the next launch: %+v, %v", saved, err)
+	if err != nil || saved.Language != "hy" || v.language != "hy" {
+		t.Fatalf("selection was not applied and saved: %+v, %v", saved, err)
+	}
+	tabs := findTabs(w.Content())
+	if tabs == nil || tabs.Selected().Text != i18n.Text("hy", "appearance") || tabs.Items[2].Text != i18n.Text("hy", "updates") {
+		t.Fatal("visible settings were not translated immediately")
+	}
+	if v.status != i18n.Text("hy", "connecting") || v.diagnostic.Text != i18n.Text("hy", "waitingReply") || v.updates.state.Stage != UpdateAvailable {
+		t.Fatal("status was not translated or update state was lost")
 	}
 	rejectSave = true
+	control = findForm(tabs.Selected().Content).Items[0].Widget.(*widget.Select)
 	control.SetSelected("Русский")
-	if control.Selected != "Հայերեն" || v.settings.Language != "hy" {
+	if control.Selected != "Հայերեն" || v.settings.Language != "hy" || v.language != "hy" {
 		t.Fatal("failed write changed language")
 	}
 	w.Close()
