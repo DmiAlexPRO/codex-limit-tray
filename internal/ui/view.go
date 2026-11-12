@@ -59,7 +59,7 @@ func NewView(a fyne.App, w fyne.Window, s settings.Settings, refresh, exit func(
 		if v.onSettings {
 			v.showMain()
 		} else {
-			v.showSettings()
+			v.ShowSettings()
 		}
 	}
 	controls := container.NewHBox(v.navigation, newWindowControl(theme.WindowMinimizeIcon(), func() { platform.Minimize(w) }), newWindowControl(theme.CancelIcon(), w.Hide))
@@ -91,7 +91,8 @@ func (v *View) showMain() {
 	v.content.Refresh()
 }
 
-func (v *View) showSettings() {
+// ShowSettings displays the settings page without changing window visibility.
+func (v *View) ShowSettings() {
 	v.onSettings = true
 	v.navigation.SetIcon(theme.NavigateBackIcon())
 	v.content.Objects = []fyne.CanvasObject{v.settingsPage}

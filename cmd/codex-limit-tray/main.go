@@ -164,12 +164,8 @@ func main() {
 	}
 	a.SetIcon(ui.IconResource(nil, s))
 	if desk, ok := a.(desktop.App); ok {
-		desk.SetSystemTrayMenu(fyne.NewMenu("Codex Limits",
-			fyne.NewMenuItem(tr("show"), show),
-			fyne.NewMenuItem(tr("refresh"), request),
-			fyne.NewMenuItem(tr("widget"), view.ShowWidget),
-			fyne.NewMenuItem(tr("appUpdates")+"…", func() { view.ShowUpdates(); show() }),
-			fyne.NewMenuItem(tr("exit"), exit)))
+		openSettings := func() { view.ShowSettings(); show() }
+		desk.SetSystemTrayMenu(newTrayMenu(s.Language, show, request, view.ShowWidget, openSettings, exit))
 		desk.SetSystemTrayIcon(ui.IconResource(nil, s))
 		systray.SetOnTapped(func() { fyne.Do(show) })
 	}

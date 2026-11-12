@@ -126,7 +126,7 @@ func TestSettingsPagesAndThemeSwitch(t *testing.T) {
 	v := NewView(a, w, s, func() {}, func() {}, func(settings.Settings) error { return nil })
 	v.ConfigureUpdates("1.0.0", true, func() {}, func() {})
 	v.SetUpdateState(UpdateState{Stage: UpdateAvailable, Version: "1.1.0", Notes: "Улучшена читаемость индикатора.", CanInstall: true})
-	v.showSettings()
+	v.ShowSettings()
 	tabs := findTabs(w.Content())
 	if tabs == nil {
 		t.Fatal("tabs missing")
