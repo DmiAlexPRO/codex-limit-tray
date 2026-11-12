@@ -6,8 +6,10 @@ import (
 	"codexlimittray/internal/quota"
 	"codexlimittray/internal/update"
 	"context"
+	"crypto/rand"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"os"
 	"os/exec"
@@ -78,8 +80,45 @@ func Resolve(override string) (string, error) {
 	return "", i18n.MessageError("codexMissing")
 }
 
-// Read owns a bounded app-server session. It never opens credential files.
-func Read(ctx context.Context, path string) ([]quota.Window, error) {
+func Read(ctx context.Context, path string) (quota.Limits, error) {
+	result, err := call(ctx, path, "account/rateLimits/read", nil)
+	if err != nil {
+		return quota.Limits{}, err
+	}
+	return quota.Parse(result)
+}
+
+func newResetKey() string {
+	var id [16]byte
+	rand.Read(id[:])
+	id[6] = id[6]&0x0f | 0x40
+	id[8] = id[8]&0x3f | 0x80
+	return fmt.Sprintf("%x-%x-%x-%x-%x", id[:4], id[4:6], id[6:8], id[8:10], id[10:])
+}
+
+func consumeReset(ctx context.Context, path, key string) (string, error) {
+	result, err := call(ctx, path, "account/rateLimitResetCredit/consume", map[string]string{"idempotencyKey": key})
+	if err != nil {
+		return "", err
+	}
+	var reply struct {
+		Outcome string `json:"outcome"`
+	}
+	if json.Unmarshal(result, &reply) == nil {
+		switch reply.Outcome {
+		case "reset", "alreadyRedeemed":
+			return "earnedResetDone", nil
+		case "nothingToReset":
+			return "earnedResetNotNeeded", nil
+		case "noCredit":
+			return "earnedResetUnavailable", nil
+		}
+	}
+	return "", errors.New("unsupported reset outcome")
+}
+
+// call owns a bounded app-server session. It never opens credential files.
+func call(ctx context.Context, path, method string, params map[string]string) (json.RawMessage, error) {
 	ctx, cancel := context.WithTimeout(ctx, 20*time.Second)
 	defer cancel()
 	cmd := exec.CommandContext(ctx, path, "app-server")
@@ -105,6 +144,12 @@ func Read(ctx context.Context, path string) ([]quota.Window, error) {
 	}
 	scanner := bufio.NewScanner(output)
 	scanner.Buffer(make([]byte, 4096), 1024*1024)
+	request := struct {
+		ID     int               `json:"id"`
+		Method string            `json:"method"`
+		Params map[string]string `json:"params,omitempty"`
+	}{ID: 2, Method: method, Params: params}
+	expectedID := 1
 	for scanner.Scan() {
 		var message response
 		if json.Unmarshal(scanner.Bytes(), &message) != nil {
@@ -113,18 +158,22 @@ func Read(ctx context.Context, path string) ([]quota.Window, error) {
 		if message.Method == "account/updated" && message.Params.AuthMode == nil {
 			return nil, ErrLogin
 		}
-		if message.ID != 1 && message.ID != 2 {
+		if message.ID != expectedID {
 			continue
 		}
 		if message.Error != nil {
 			return nil, classify(message.Error.Message)
 		}
 		if message.ID == 2 {
-			return quota.Parse(message.Result)
+			return message.Result, nil
 		}
-		if _, err = io.WriteString(input, "{\"method\":\"initialized\"}\n{\"id\":2,\"method\":\"account/rateLimits/read\"}\n"); err != nil {
+		if _, err = io.WriteString(input, "{\"method\":\"initialized\"}\n"); err != nil {
 			return nil, errors.New("Codex connection failed")
 		}
+		if err = json.NewEncoder(input).Encode(request); err != nil {
+			return nil, errors.New("Codex connection failed")
+		}
+		expectedID = 2
 	}
 	if ctx.Err() != nil {
 		return nil, errors.New("Codex response timed out")

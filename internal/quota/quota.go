@@ -13,6 +13,16 @@ type Window struct {
 	Reset              time.Time
 }
 
+type Limits struct {
+	Windows      []Window
+	ResetCredits *ResetCredits
+}
+
+type ResetCredits struct {
+	Available int
+	ExpiresAt []time.Time
+}
+
 type wireWindow struct {
 	Used    *float64 `json:"usedPercent"`
 	Minutes int      `json:"windowDurationMins"`
@@ -23,20 +33,21 @@ type bucket struct {
 	Secondary *wireWindow `json:"secondary"`
 }
 
-func Parse(data []byte) ([]Window, error) {
+func Parse(data []byte) (Limits, error) {
 	var result struct {
 		Legacy  *bucket            `json:"rateLimits"`
 		Buckets map[string]*bucket `json:"rateLimitsByLimitId"`
+		Credits json.RawMessage    `json:"rateLimitResetCredits"`
 	}
 	if err := json.Unmarshal(data, &result); err != nil {
-		return nil, errors.New("unsupported quota format")
+		return Limits{}, errors.New("unsupported quota format")
 	}
 	b := result.Legacy
 	if current, present := result.Buckets["codex"]; present {
 		b = current
 	}
 	if b == nil {
-		return nil, errors.New("Codex returned no quota data")
+		return Limits{}, errors.New("Codex returned no quota data")
 	}
 	windows := make([]Window, 0, 2)
 	for _, source := range []*wireWindow{b.Primary, b.Secondary} {
@@ -50,12 +61,40 @@ func Parse(data []byte) ([]Window, error) {
 		windows = append(windows, w)
 	}
 	if len(windows) == 0 {
-		return nil, errors.New("Codex returned no recognized quota windows")
+		return Limits{}, errors.New("Codex returned no recognized quota windows")
 	}
 	sort.SliceStable(windows, func(i, j int) bool {
 		return windows[i].Minutes > 0 && windows[j].Minutes > 0 && windows[i].Minutes < windows[j].Minutes
 	})
-	return windows, nil
+	return Limits{Windows: windows, ResetCredits: parseResetCredits(result.Credits)}, nil
+}
+
+func parseResetCredits(data json.RawMessage) *ResetCredits {
+	var wire struct {
+		Available *int `json:"availableCount"`
+		Credits   []struct {
+			Status    string `json:"status"`
+			ExpiresAt *int64 `json:"expiresAt"`
+		} `json:"credits"`
+	}
+	if json.Unmarshal(data, &wire) != nil || wire.Available == nil || *wire.Available < 0 {
+		return nil
+	}
+	credits := &ResetCredits{Available: *wire.Available}
+	for _, credit := range wire.Credits {
+		if len(credits.ExpiresAt) >= credits.Available {
+			break
+		}
+		if credit.Status != "available" {
+			continue
+		}
+		var expiry time.Time
+		if credit.ExpiresAt != nil && *credit.ExpiresAt >= 0 && *credit.ExpiresAt <= 253402214399 {
+			expiry = time.Unix(*credit.ExpiresAt, 0)
+		}
+		credits.ExpiresAt = append(credits.ExpiresAt, expiry)
+	}
+	return credits
 }
 func Delay(failures int) time.Duration {
 	if failures <= 0 {

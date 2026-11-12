@@ -96,14 +96,17 @@ func main() {
 		current := generation
 		ctx, stop := context.WithCancel(ctx)
 		cancel = stop
+		resetRequests := make(chan struct{}, 1)
+		view.ConfigureReset(func() { resetRequests <- struct{}{} })
 		view.Update(nil, tr("connecting"), tr("waitingReply"))
 		override := s.CodexPath
 		workers.Add(1)
 		go func() {
 			defer workers.Done()
-			codex.Monitor(ctx, override, refresh, func(snapshot codex.Snapshot) {
+			codex.Monitor(ctx, override, refresh, resetRequests, func(snapshot codex.Snapshot) {
 				fyne.Do(func() {
 					if current == generation && ctx.Err() == nil {
+						view.SetResetCredits(snapshot.ResetCredits, snapshot.ResetMessage)
 						view.Update(snapshot.Windows, snapshot.Status(language), snapshot.Diagnostic(language))
 					}
 				})
