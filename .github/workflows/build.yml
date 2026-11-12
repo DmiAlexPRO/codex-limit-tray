@@ -64,7 +64,9 @@ jobs:
         run: ./scripts/test-installer.ps1
       - name: Build and test macOS ZIP
         if: runner.os == 'macOS'
-        run: sh scripts/build-macos.sh
+        run: |
+          sh scripts/build-macos.sh
+          vtool -show-build dist/CodexLimitTray.app/Contents/MacOS/codex-limit-tray | grep -Eq 'minos 13\.0([.][0-9]+)?$'
       - name: Stage exactly the expected assets
         shell: bash
         env:
@@ -83,8 +85,32 @@ jobs:
           path: upload/
           if-no-files-found: error
 
-  publish:
+  macos_14:
     needs: build
+    runs-on: macos-14
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: CodexLimitTray-macOS-arm64
+          path: artifact
+      - name: Smoke test the release bundle on macOS 14
+        shell: bash
+        run: |
+          set -euo pipefail
+          ditto -x -k artifact/CodexLimitTray-macOS-arm64.zip app
+          binary=app/CodexLimitTray.app/Contents/MacOS/codex-limit-tray
+          "$binary" > macos-smoke.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          sleep 10
+          if ! kill -0 "$pid" 2>/dev/null; then
+            cat macos-smoke.log
+            wait "$pid" || true
+            exit 1
+          fi
+
+  publish:
+    needs: [build, macos_14]
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     environment: release
