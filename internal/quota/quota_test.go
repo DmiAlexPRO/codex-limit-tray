@@ -20,7 +20,8 @@ func TestFormats(t *testing.T) {
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			w, err := Parse([]byte(c.payload))
+			limits, err := Parse([]byte(c.payload))
+			w := limits.Windows
 			if c.count == 0 {
 				if err == nil {
 					t.Fatal("missing data accepted")
@@ -29,6 +30,41 @@ func TestFormats(t *testing.T) {
 			}
 			if err != nil || len(w) != c.count || w[0].Remaining != c.remaining || w[0].Minutes != c.minutes {
 				t.Fatalf("unexpected result: %+v %v", w, err)
+			}
+		})
+	}
+}
+
+func TestResetCredits(t *testing.T) {
+	for _, tc := range []struct {
+		credits string
+		count   int
+		rows    int
+	}{
+		{"null", -1, 0},
+		{`{"credits":[]}`, -1, 0},
+		{`{"availableCount":"bad"}`, -1, 0},
+		{`{"availableCount":0,"credits":[]}`, 0, 0},
+		{`{"availableCount":4,"credits":null}`, 4, 0},
+		{`{"availableCount":3,"credits":[{"status":"redeemed"},{"status":"available","expiresAt":1794484800},{"status":"available","expiresAt":null}]}`, 3, 2},
+	} {
+		t.Run(tc.credits, func(t *testing.T) {
+			limits, err := Parse([]byte(`{"rateLimits":{"primary":{"usedPercent":43}},"rateLimitResetCredits":` + tc.credits + `}`))
+			if err != nil || len(limits.Windows) != 1 {
+				t.Fatalf("lost quota windows: %+v %v", limits, err)
+			}
+			credits := limits.ResetCredits
+			if tc.count < 0 {
+				if credits != nil {
+					t.Fatalf("expected unknown count, got %+v", credits)
+				}
+				return
+			}
+			if credits == nil || credits.Available != tc.count || len(credits.ExpiresAt) != tc.rows {
+				t.Fatalf("unexpected credits: %+v", credits)
+			}
+			if tc.rows == 2 && (credits.ExpiresAt[0].Unix() != 1794484800 || !credits.ExpiresAt[1].IsZero()) {
+				t.Fatalf("unexpected expiry: %v", credits.ExpiresAt)
 			}
 		})
 	}

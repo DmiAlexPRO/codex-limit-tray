@@ -87,6 +87,8 @@ The icon appears while the app is running. To have it appear after signing in, e
 
 Codex Limit Tray starts your local `codex app-server` and reads `account/rateLimits/read`. Codex handles authentication; the tray app never reads credential files. Successful polls run every 30 seconds; failures back off to five minutes. Each poll currently starts a short-lived app-server process.
 
+When Codex reports earned resets, the dashboard shows the available count and expiration dates when provided. Lists with more than five entries scroll within their own section. “Reset…” spends one reset after confirmation, then refreshes the limits.
+
 The app has **no analytics** and does not save quota values. Update checks contact GitHub without sending Codex credentials, account details or quota values. Preferences live in `CodexLimitTray/fyne-preview.json` under `%APPDATA%` (Windows) or `~/Library/Application Support` (macOS). Diagnostic paths may contain your username; redact them before sharing. See [Security](SECURITY.md).
 
 ## Build or try a demo

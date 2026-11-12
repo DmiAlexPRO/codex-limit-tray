@@ -9,23 +9,25 @@ import (
 )
 
 type Snapshot struct {
-	Windows []quota.Window
-	Error   error
-	Path    string
-	Updated time.Time
-	Next    time.Duration
+	quota.Limits
+	Error        error
+	Path         string
+	Updated      time.Time
+	Next         time.Duration
+	ResetMessage string
 }
 
-func Monitor(ctx context.Context, override string, refresh <-chan struct{}, update func(Snapshot)) {
+func Monitor(ctx context.Context, override string, refresh, redeem <-chan struct{}, update func(Snapshot)) {
 	failures := 0
+	var resetMessage, resetKey, resetPath string
 	for {
 		if ctx.Err() != nil {
 			return
 		}
 		path, err := Resolve(override)
-		var windows []quota.Window
+		var limits quota.Limits
 		if err == nil {
-			windows, err = Read(ctx, path)
+			limits, err = Read(ctx, path)
 		}
 		if ctx.Err() != nil {
 			return
@@ -35,7 +37,8 @@ func Monitor(ctx context.Context, override string, refresh <-chan struct{}, upda
 			failures = 0
 		}
 		delay := quota.Delay(failures)
-		update(Snapshot{Windows: windows, Error: err, Path: path, Updated: time.Now(), Next: delay})
+		update(Snapshot{Limits: limits, Error: err, Path: path, Updated: time.Now(), Next: delay, ResetMessage: resetMessage})
+		resetMessage = ""
 		timer := time.NewTimer(delay)
 		select {
 		case <-ctx.Done():
@@ -43,6 +46,21 @@ func Monitor(ctx context.Context, override string, refresh <-chan struct{}, upda
 			return
 		case <-refresh:
 			timer.Stop()
+		case <-redeem:
+			timer.Stop()
+			resetMessage = "earnedResetUnavailable"
+			if err != nil || limits.ResetCredits == nil || limits.ResetCredits.Available == 0 {
+				continue
+			}
+			if resetKey == "" || resetPath != path {
+				resetKey, resetPath = newResetKey(), path
+			}
+			resetMessage, err = consumeReset(ctx, path, resetKey)
+			if err != nil {
+				resetMessage = "earnedResetUnconfirmed"
+				continue
+			}
+			resetKey = ""
 		case <-timer.C:
 		}
 	}

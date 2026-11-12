@@ -38,6 +38,7 @@ type View struct {
 	mainPage       fyne.CanvasObject
 	settingsPage   *container.AppTabs
 	updates        *updatePanel
+	resets         *resetPanel
 	navigation     *widget.Button
 	onSettings     bool
 	refresh        func()
@@ -48,7 +49,8 @@ func NewView(a fyne.App, w fyne.Window, s settings.Settings, refresh, exit func(
 	tr := func(key string) string { return i18n.Text(s.Language, key) }
 	v := &View{app: a, window: w, settings: s, language: s.Language, status: tr("waiting"), refresh: refresh, save: save}
 	a.Settings().SetTheme(appTheme{s})
-	v.dashboard = container.NewStack(Dashboard(nil, v.status, s))
+	v.resets = newResetPanel(w, v.language)
+	v.dashboard = container.NewStack(dashboard(nil, v.status, s, v.resets))
 	v.diagnostic = wrapped(tr("diagnosticEmpty"))
 	v.content = container.NewStack()
 	v.navigation = widget.NewButtonWithIcon("", theme.SettingsIcon(), nil)
@@ -112,7 +114,7 @@ func (v *View) Update(windows []quota.Window, status, diagnostic string) {
 func (v *View) render() {
 	display := v.settings
 	display.Language = v.language
-	v.dashboard.Objects = []fyne.CanvasObject{Dashboard(v.windows, v.status, display)}
+	v.dashboard.Objects = []fyne.CanvasObject{dashboard(v.windows, v.status, display, v.resets)}
 	v.dashboard.Refresh()
 	if desk, ok := v.app.(desktop.App); ok {
 		desk.SetSystemTrayIcon(IconResource(v.windows, v.settings))
@@ -136,7 +138,7 @@ func dashboardPage(dashboard *fyne.Container, language string, refresh func(), s
 	return container.NewBorder(nil, actions, nil, nil, dashboard)
 }
 
-func Dashboard(windows []quota.Window, status string, s settings.Settings) fyne.CanvasObject {
+func dashboard(windows []quota.Window, status string, s settings.Settings, resets *resetPanel) fyne.CanvasObject {
 	tr := func(key string) string { return i18n.Text(s.Language, key) }
 	items := container.NewVBox(
 		text(tr("limits"), 26, true),
@@ -148,7 +150,13 @@ func Dashboard(windows []quota.Window, status string, s settings.Settings) fyne.
 	for index, w := range windows {
 		items.Add(QuotaCard(w, index, s))
 	}
-	return container.NewBorder(nil, wrapped(status), nil, nil, container.NewVScroll(items))
+	items.Add(resets.body)
+	scroll := container.NewVScroll(items)
+	resets.relayout = func() {
+		scroll.Refresh()
+		items.Refresh()
+	}
+	return container.NewBorder(nil, wrapped(status), nil, nil, scroll)
 }
 
 func QuotaCard(w quota.Window, index int, s settings.Settings) fyne.CanvasObject {
@@ -357,6 +365,10 @@ func (v *View) connection() fyne.CanvasObject {
 	apply := highButton(tr("saveCheck"), theme.ConfirmIcon(), func() {
 		s := v.settings
 		s.CodexPath = strings.TrimSpace(path.Text)
+		if s.CodexPath != v.settings.CodexPath && v.resets.pending {
+			v.showSaveError(i18n.MessageError("earnedResetPending"))
+			return
+		}
 		if err := v.save(s); err != nil {
 			v.showSaveError(err)
 			return

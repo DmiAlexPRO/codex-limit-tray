@@ -21,11 +21,17 @@ func TestCatalogs(t *testing.T) {
 			}
 			names[language.Name] = true
 			messages := catalogs[language.Code]
-			if len(messages) != len(catalogs[English]) {
-				t.Fatal("catalog has the wrong number of messages")
+			for key := range messages {
+				if _, ok := catalogs[English][key]; !ok {
+					t.Errorf("unknown translation key: %s", key)
+				}
 			}
 			for key, english := range catalogs[English] {
-				value := messages[key]
+				value, present := messages[key]
+				// Earned reset messages fall back to English outside the initial locales.
+				if !present && language.Code != English && language.Code != "ru" && strings.HasPrefix(key, "earnedReset") {
+					continue
+				}
 				if strings.TrimSpace(value) == "" || !utf8.ValidString(value) {
 					t.Errorf("missing or invalid translation: %s", key)
 				}

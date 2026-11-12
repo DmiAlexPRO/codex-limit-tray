@@ -2,6 +2,13 @@
 
 This file records user-facing changes. Release versions follow Semantic Versioning.
 
+## 3.4.0 — Earned Codex limit resets
+
+- See your available resets and their expiration dates when Codex provides them. Lists longer than five entries scroll in place.
+- Use a reset from the dashboard after confirming. The app then refreshes the limits through the same local Codex connection.
+
+See the [3.4.0 release notes](docs/releases/v3.4.0.md).
+
 ## 3.3.0 — Tray icon visibility
 
 - Added tray icon visibility instructions in Appearance and both READMEs.
