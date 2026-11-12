@@ -64,7 +64,9 @@ jobs:
         run: ./scripts/test-installer.ps1
       - name: Build and test macOS ZIP
         if: runner.os == 'macOS'
-        run: sh scripts/build-macos.sh
+        run: |
+          sh scripts/build-macos.sh
+          vtool -show-build dist/CodexLimitTray.app/Contents/MacOS/codex-limit-tray | grep -Eq 'minos 13\.0([.][0-9]+)?$'
       - name: Stage exactly the expected assets
         shell: bash
         env:

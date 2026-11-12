@@ -2,6 +2,8 @@
 set -eu
 cd "$(dirname "$0")/.."
 if [ "$(uname -s)" != Darwin ]; then echo 'Run this script on macOS with Xcode Command Line Tools installed.' >&2; exit 1; fi
+MACOSX_DEPLOYMENT_TARGET=13.0
+export MACOSX_DEPLOYMENT_TARGET
 go test ./...
 go vet ./...
 version=${APP_VERSION:-3.0.0-preview}
@@ -27,6 +29,7 @@ cat > "$bundle/Contents/Info.plist" <<PLIST
 <key>CFBundlePackageType</key><string>APPL</string>
 <key>CFBundleShortVersionString</key><string>${version%%-*}</string>
 <key>CFBundleVersion</key><string>${version%%-*}</string>
+<key>LSMinimumSystemVersion</key><string>${MACOSX_DEPLOYMENT_TARGET}</string>
 <key>LSUIElement</key><true/>
 <key>NSHighResolutionCapable</key><true/>
 </dict></plist>
