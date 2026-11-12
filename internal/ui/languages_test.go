@@ -78,7 +78,7 @@ func TestLanguagePagesRender(t *testing.T) {
 			w.Show()
 			v.showMain()
 			checkButtons(t, v.mainPage)
-			v.showSettings()
+			v.ShowSettings()
 			for page := range v.settingsPage.Items {
 				v.settingsPage.SelectIndex(page)
 				img := w.Canvas().Capture()

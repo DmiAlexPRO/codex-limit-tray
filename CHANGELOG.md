@@ -2,6 +2,14 @@
 
 This file records user-facing changes. Release versions follow Semantic Versioning.
 
+## 3.4.1 — Clearer tray menu
+
+- Removed the duplicate Quit entry and clarified the tray action labels.
+- Added a direct shortcut to Settings in the tray menu.
+- Set macOS 13 as the minimum deployment target for the Intel and Apple Silicon builds.
+
+See the [3.4.1 release notes](docs/releases/v3.4.1.md).
+
 ## 3.4.0 — Earned Codex limit resets
 
 - See your available resets and their expiration dates when Codex provides them. Lists longer than five entries scroll in place.

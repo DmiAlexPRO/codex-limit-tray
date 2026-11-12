@@ -85,7 +85,7 @@ func (v *View) ShowUpdates() {
 	if v.updates == nil {
 		return
 	}
-	v.showSettings()
+	v.ShowSettings()
 	v.settingsPage.Select(v.updates.tab)
 }
 
