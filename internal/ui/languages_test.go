@@ -3,9 +3,11 @@ package ui
 import (
 	"errors"
 	"image/png"
+	"net/url"
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"codexlimittray/internal/i18n"
 	"codexlimittray/internal/quota"
@@ -30,7 +32,9 @@ func TestLanguageSelection(t *testing.T) {
 	}
 	v := NewView(a, w, s, func() {}, func() {}, save)
 	v.ConfigureUpdates("3.4.1", true, func() {}, func() {})
-	v.SetUpdateState(UpdateState{Stage: UpdateAvailable, Version: "3.4.2", CanInstall: true})
+	retryAt := time.Date(2026, time.November, 12, 10, 30, 0, 0, time.Local)
+	releasePage := &url.URL{Scheme: "https", Host: "github.com", Path: "/org/repo/releases/latest"}
+	v.SetUpdateState(UpdateState{Stage: UpdateError, RetryAt: retryAt, ReleasePage: releasePage})
 	v.UpdateLocalized(nil, func(language string) (string, string) {
 		return i18n.Text(language, "connecting"), i18n.Text(language, "waitingReply")
 	})
@@ -55,8 +59,12 @@ func TestLanguageSelection(t *testing.T) {
 	if tabs == nil || tabs.Selected().Text != i18n.Text("hy", "appearance") || tabs.Items[2].Text != i18n.Text("hy", "updates") {
 		t.Fatal("visible settings were not translated immediately")
 	}
-	if v.status != i18n.Text("hy", "connecting") || v.diagnostic.Text != i18n.Text("hy", "waitingReply") || v.updates.state.Stage != UpdateAvailable {
-		t.Fatal("status was not translated or update state was lost")
+	if v.status != i18n.Text("hy", "connecting") || v.diagnostic.Text != i18n.Text("hy", "waitingReply") {
+		t.Fatal("status was not translated")
+	}
+	if !v.updates.state.RetryAt.Equal(retryAt) || v.updates.state.ReleasePage != releasePage ||
+		!v.updates.openRelease.Visible() || v.updates.openRelease.Text != i18n.Text("hy", "openReleasePage") {
+		t.Fatal("rate limit or localized release link was lost on language change")
 	}
 	rejectSave = true
 	control = findForm(tabs.Selected().Content).Items[0].Widget.(*widget.Select)

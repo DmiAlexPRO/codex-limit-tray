@@ -73,6 +73,8 @@
   "available": "Há uma atualização disponível.",
   "installing": "Preparando a instalação. O app será reiniciado.",
   "updateError": "Não foi possível atualizar o app. Tente novamente.",
+  "updateRateLimited": "O GitHub limitou temporariamente a verificação de atualizações. Tente novamente após %s.",
+  "openReleasePage": "Abrir página da versão",
   "notChecked": "Ainda não houve verificação.",
   "noRelease": "Ainda não há uma versão compatível no GitHub.",
   "manualInstall": "Instale a nova versão manualmente pelo GitHub Releases.",

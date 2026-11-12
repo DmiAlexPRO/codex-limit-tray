@@ -73,6 +73,8 @@
   "available": "Pembaruan tersedia.",
   "installing": "Menyiapkan pemasangan. Aplikasi akan dimulai ulang.",
   "updateError": "Gagal memperbarui aplikasi. Coba lagi.",
+  "updateRateLimited": "GitHub membatasi pemeriksaan pembaruan untuk sementara. Coba lagi setelah %s.",
+  "openReleasePage": "Buka halaman rilis",
   "notChecked": "Belum diperiksa.",
   "noRelease": "Belum ada rilis yang cocok di GitHub.",
   "manualInstall": "Pasang versi baru secara manual dari GitHub Releases.",

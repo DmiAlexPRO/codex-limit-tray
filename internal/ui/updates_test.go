@@ -2,8 +2,10 @@ package ui
 
 import (
 	"image/color"
+	"net/url"
 	"strings"
 	"testing"
+	"time"
 
 	"codexlimittray/internal/settings"
 	"fyne.io/fyne/v2/test"
@@ -75,6 +77,38 @@ func TestPortableUpdateRequiresManualAction(t *testing.T) {
 	test.Tap(p.install)
 	if installs != 1 {
 		t.Fatal("portable setup did not start")
+	}
+}
+
+func TestRateLimitShowsRetryAndReleasePage(t *testing.T) {
+	a := &settingsLinkApp{App: test.NewApp()}
+	defer a.Quit()
+	w := a.NewWindow("rate limited updates")
+	s := settings.Default()
+	s.Language = "ru"
+	v := NewView(a, w, s, func() {}, func() {}, func(settings.Settings) error { return nil })
+	v.ConfigureUpdates("1.0.0", true, func() {}, func() {})
+	v.ShowUpdates()
+	w.Show()
+	p := v.updates
+	if p.openRelease.Visible() {
+		t.Fatal("release button visible before rate limit")
+	}
+	retryAt := time.Date(2026, time.November, 12, 10, 30, 0, 0, time.Local)
+	link := &url.URL{Scheme: "https", Host: "github.com", Path: "/org/repo/releases/latest"}
+	v.SetUpdateState(UpdateState{Stage: UpdateError, RetryAt: retryAt, ReleasePage: link})
+	if !p.openRelease.Visible() || p.openRelease.Text != "Открыть страницу релиза" ||
+		!strings.Contains(p.status.Text, "2026-11-12 10:30:00") || strings.Contains(p.status.Text, "403") ||
+		p.install.Visible() || a.opened != "" || w.Canvas().Capture().Bounds().Empty() {
+		t.Fatalf("invalid rate limit display: %s", p.status.Text)
+	}
+	test.Tap(p.openRelease)
+	if a.opened != link.String() {
+		t.Fatalf("opened %q, want %q", a.opened, link)
+	}
+	v.SetUpdateState(UpdateState{Stage: UpdateChecking})
+	if p.openRelease.Visible() {
+		t.Fatal("stale release button")
 	}
 }
 

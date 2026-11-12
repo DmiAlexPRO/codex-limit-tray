@@ -73,6 +73,8 @@
   "available": "Une mise à jour est disponible.",
   "installing": "Préparation de l’installation. L’app va redémarrer.",
   "updateError": "Impossible de mettre à jour l’app. Réessayez.",
+  "updateRateLimited": "GitHub limite temporairement la recherche de mises à jour. Réessayez après %s.",
+  "openReleasePage": "Ouvrir la page de la version",
   "notChecked": "Pas encore de vérification.",
   "noRelease": "Aucune version correspondante sur GitHub pour l’instant.",
   "manualInstall": "Installez la nouvelle version manuellement depuis GitHub Releases.",

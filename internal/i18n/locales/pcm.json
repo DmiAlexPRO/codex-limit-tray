@@ -73,6 +73,8 @@
   "available": "Update don come out.",
   "installing": "E dey prepare to install. Di app go start again.",
   "updateError": "E no fit update di app. Try again.",
+  "updateRateLimited": "GitHub don limit update checks for now. Try again after %s.",
+  "openReleasePage": "Open release page",
   "notChecked": "E never check.",
   "noRelease": "No release wey match for GitHub yet.",
   "manualInstall": "Install di new version yourself from GitHub Releases.",

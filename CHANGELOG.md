@@ -5,6 +5,7 @@ This file records user-facing changes. Release versions follow Semantic Versioni
 ## 3.4.2 — Switch languages without restarting
 
 - Apply the selected language immediately to the main window, settings and tray menu.
+- When GitHub rate-limits an update check, show the retry time and a link to the release page instead of a generic HTTP error.
 
 See the [3.4.2 release notes](docs/releases/v3.4.2.md).
 

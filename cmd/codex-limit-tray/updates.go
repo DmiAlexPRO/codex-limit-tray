@@ -2,9 +2,11 @@ package main
 
 import (
 	"context"
+	"errors"
 	"os"
 	"runtime"
 	"sync"
+	"time"
 
 	"codexlimittray/internal/ui"
 	"codexlimittray/internal/update"
@@ -23,12 +25,18 @@ type updateController struct {
 	exit      func()
 	busy      bool
 	release   *update.Release
+	rateLimit ui.UpdateState
 }
 
 func (c *updateController) check(automatic bool) {
 	if c.busy || c.ctx.Err() != nil {
 		return
 	}
+	if time.Now().Before(c.rateLimit.RetryAt) {
+		c.render(c.rateLimit)
+		return
+	}
+	c.rateLimit = ui.UpdateState{}
 	c.busy = true
 	c.release = nil
 	c.render(ui.UpdateState{Stage: ui.UpdateChecking})
@@ -40,6 +48,12 @@ func (c *updateController) check(automatic bool) {
 			}
 			c.busy = false
 			if err != nil {
+				var limited *update.RateLimitError
+				if errors.As(err, &limited) {
+					c.rateLimit = ui.UpdateState{Stage: ui.UpdateError, RetryAt: limited.RetryAt, ReleasePage: limited.ReleasePage}
+					c.render(c.rateLimit)
+					return
+				}
 				c.render(ui.UpdateState{Stage: ui.UpdateError, Message: err.Error()})
 				return
 			}

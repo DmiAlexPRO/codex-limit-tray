@@ -15,6 +15,7 @@ import (
 	"strings"
 	"sync"
 	"testing"
+	"time"
 
 	"codexlimittray/internal/settings"
 	"codexlimittray/internal/ui"
@@ -195,5 +196,43 @@ func TestUpdatesThroughSignedDownload(t *testing.T) {
 				t.Fatalf("orphaned installer: %v %v", files, err)
 			}
 		})
+	}
+}
+
+func TestUpdateChecksWaitForRateLimit(t *testing.T) {
+	fakeRelease(t, "1.1.0", false)
+	requests := 0
+	http.DefaultTransport = releaseTransport(func(*http.Request) (*http.Response, error) {
+		requests++
+		return &http.Response{
+			StatusCode: http.StatusForbidden,
+			Header:     http.Header{"Retry-After": []string{"120"}},
+			Body:       io.NopCloser(strings.NewReader("rate limit reached")),
+		}, nil
+	})
+	var workers sync.WaitGroup
+	var state ui.UpdateState
+	dispatch := make(chan func(), 1)
+	c := &updateController{
+		ctx: t.Context(), workers: &workers,
+		render:   func(next ui.UpdateState) { state = next },
+		dispatch: func(fn func()) { dispatch <- fn },
+	}
+	c.check(false)
+	workers.Wait()
+	(<-dispatch)()
+	if state.Stage != ui.UpdateError || !state.RetryAt.After(time.Now()) || state.Message != "" || state.ReleasePage == nil {
+		t.Fatalf("expected actionable rate-limit state: %+v", state)
+	}
+	c.check(false)
+	if requests != 1 || c.busy {
+		t.Fatal("checked GitHub before the retry time")
+	}
+	c.rateLimit.RetryAt = time.Now().Add(-time.Second)
+	c.check(false)
+	workers.Wait()
+	(<-dispatch)()
+	if requests != 2 {
+		t.Fatal("did not resume checks after the retry time")
 	}
 }

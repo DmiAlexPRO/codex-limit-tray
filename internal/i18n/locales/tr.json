@@ -73,6 +73,8 @@
   "available": "Bir güncelleme var.",
   "installing": "Yükleme hazırlanıyor. Uygulama yeniden başlayacak.",
   "updateError": "Uygulama güncellenemedi. Yeniden deneyin.",
+  "updateRateLimited": "GitHub güncelleme denetimini geçici olarak sınırladı. %s sonrasında tekrar deneyin.",
+  "openReleasePage": "Sürüm sayfasını aç",
   "notChecked": "Henüz denetlenmedi.",
   "noRelease": "GitHub’da henüz uygun bir sürüm yok.",
   "manualInstall": "Yeni sürümü GitHub Releases üzerinden elle yükleyin.",

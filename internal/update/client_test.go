@@ -14,8 +14,10 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"testing"
+	"time"
 )
 
 type transport func(*http.Request) (*http.Response, error)
@@ -96,6 +98,74 @@ func TestSafetyLimits(t *testing.T) {
 	cancel()
 	if _, err := c.check(ctx); !errors.Is(err, context.Canceled) {
 		t.Fatal(err)
+	}
+}
+
+func TestGitHubRateLimit(t *testing.T) {
+	reset := time.Now().Add(10 * time.Minute).Truncate(time.Second)
+	for _, tc := range []struct {
+		name   string
+		code   int
+		header string
+		value  string
+		limit  bool
+	}{
+		{"primary", 403, "X-RateLimit-Remaining", "0", true},
+		{"secondary", 403, "Retry-After", "30", true},
+		{"too many requests", 429, "", "", true},
+		{"unrelated forbidden", 403, "X-RateLimit-Remaining", "4", false},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			c := mock("1.0.0", func(*http.Request) (*http.Response, error) {
+				resp := reply("untrusted server text", tc.code)
+				resp.Header.Set("X-RateLimit-Reset", strconv.FormatInt(reset.Unix(), 10))
+				if tc.header != "" {
+					resp.Header.Set(tc.header, tc.value)
+				}
+				return resp, nil
+			})
+			_, err := c.check(context.Background())
+			var limit *RateLimitError
+			if errors.As(err, &limit) != tc.limit {
+				t.Fatalf("unexpected error: %v", err)
+			}
+			if !tc.limit {
+				if err == nil || err.Error() != "update server returned HTTP 403" {
+					t.Fatalf("ordinary 403 changed: %v", err)
+				}
+				return
+			}
+			earliest := time.Now().Add(20 * time.Second)
+			validRetry := limit.RetryAt.After(earliest) && limit.RetryAt.Before(reset)
+			if tc.name == "primary" {
+				validRetry = limit.RetryAt.Equal(reset)
+			}
+			if !validRetry || limit.ReleasePage.String() != "https://github.com/org/repo/releases/latest" {
+				t.Fatalf("unexpected retry time or release URL: %+v", limit)
+			}
+		})
+	}
+}
+
+func TestRetryAt(t *testing.T) {
+	now := time.Date(2026, time.November, 12, 9, 0, 0, 0, time.UTC)
+	for _, tc := range []struct {
+		retry, reset, remaining string
+		want                    time.Duration
+	}{
+		{"120", strconv.FormatInt(now.Add(time.Hour).Unix(), 10), "5", 2 * time.Minute},
+		{"30", strconv.FormatInt(now.Add(time.Minute).Unix(), 10), "0", time.Minute},
+		{now.Add(5 * time.Minute).Format(http.TimeFormat), strconv.FormatInt(now.Add(time.Minute).Unix(), 10), "0", 5 * time.Minute},
+		{"garbage", strconv.FormatInt(now.Add(-time.Minute).Unix(), 10), "0", time.Minute},
+		{"9223372036854775807", "", "", time.Minute},
+	} {
+		headers := make(http.Header)
+		headers.Set("Retry-After", tc.retry)
+		headers.Set("X-RateLimit-Reset", tc.reset)
+		headers.Set("X-RateLimit-Remaining", tc.remaining)
+		if got := retryAt(headers, now); got.Sub(now) != tc.want {
+			t.Errorf("retry %q, reset %q: got %v, want %v", tc.retry, tc.reset, got.Sub(now), tc.want)
+		}
 	}
 }
 
