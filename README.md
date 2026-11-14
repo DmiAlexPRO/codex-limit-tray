@@ -57,7 +57,7 @@ To change the tray icon, open the gear → **Appearance → Icon** and choose **
 2. Download and run **CodexLimitTray-windows-x64-Setup.exe**. It installs for your Windows user, without administrator privileges. The installer does **not** have an Authenticode publisher signature; Windows may show a SmartScreen warning. Get the installer only from this repository's releases.
 3. Open **Codex Limit Tray**. Close its window to leave the icon in the tray; click the icon to bring the window back. If Codex isn't found, open the gear → **Connection** and enter the full path to the trusted Codex executable.
 
-The download button follows the latest **stable Windows release**, not previews. See the [3.0.1 release notes](docs/releases/v3.0.1.md) for the update policy and platform limits.
+The download button follows the latest **stable Windows release**, not previews. See the [changelog](CHANGELOG.md) for what changed.
 
 ## Which download should I use?
 
@@ -65,9 +65,9 @@ The download button follows the latest **stable Windows release**, not previews.
 | --- | --- | --- |
 | **Windows x64 · Setup** | You want a Start menu entry and updates without reinstalling by hand. | The stable edition checks for stable releases at startup by default; verifies a newer installer, installs it and restarts in the tray. You can switch to manual checks. |
 | **Windows x64 · portable ZIP** | You want to run the EXE from a folder without installing. | No automatic check or installation. Replace the portable copy yourself, or explicitly choose to install the normal edition. Your settings carry over. |
-| **macOS · experimental** | You want to try the app on Apple Silicon (`arm64`) or Intel (`x86_64`). Choose the matching ZIP when available. | Unzip the `.app` and install or replace it manually. In-app checks show release notes only. Bundles are unsigned and not notarized; real-hardware acceptance is pending. |
+| **macOS · experimental** | You want to try the app on Apple Silicon (`arm64`) or Intel (`x86_64`) with macOS 13 or later. Choose the matching ZIP when available. | Unzip the `.app` and install or replace it manually. In-app checks show release notes only. Bundles are unsigned and not notarized; real-hardware acceptance is pending. |
 
-In **Settings → Updates**, read what changed, check manually, or turn off **Automatically install updates on startup**. With auto-update off, there is no startup check. **Refresh limits** on the main screen only refreshes your quota. In-app installer updates are checked against an embedded Ed25519 public key; this does not authenticate your first download. See [how updates are verified](docs/UPDATES.md).
+In **Settings → Updates**, read what changed, check manually, or turn off **Auto-install updates at startup**. With auto-update off, there is no startup check. **Refresh limits** on the main screen only refreshes your quota. In-app installer updates are checked against an embedded Ed25519 public key; this does not authenticate your first download. See [how updates are verified](docs/UPDATES.md).
 
 ## Using the tray and widget
 
@@ -75,10 +75,12 @@ In **Settings → Updates**, read what changed, check manually, or turn off **Au
 - In **Appearance**, choose a theme, tray indicator style, low-quota color and optional Windows sound. To start in the tray at login, enable **Start at login**.
 - The dashboard shows only the quota windows Codex returns. If a request fails, the app shows the error instead of presenting old numbers as current.
 
+When Codex reports earned resets, the dashboard shows the available count and expiration dates when provided. Lists with more than five entries scroll within their own section. “Reset…” spends one reset after confirmation, then refreshes the limits.
+
 ### Keep the tray icon visible
 
 1. Launch **Codex Limit Tray**.
-2. On Windows, right-click an empty spot on the taskbar and open **Taskbar settings**.
+2. On Windows, select **Appearance → Open taskbar settings** in the app. You can also right-click an empty spot on the taskbar and choose **Taskbar settings**.
 3. On **Windows 11**, expand **Other system tray icons**. On **Windows 10**, open **Notification area → Select which icons appear on the taskbar**. Turn on **Codex Limit Tray**. You can also open the hidden icons menu (**↑**) and drag the icon next to the clock. [Microsoft Support](https://support.microsoft.com/en-us/windows/experience/personalization/customize-the-taskbar-in-windows)
 
 On **macOS**, the app adds its icon to the menu bar, not the Dock. If the icon is hidden on macOS 26 or later and the app is listed under **System Settings → Menu Bar → Allow in the Menu Bar**, turn it on there. [Apple Support](https://support.apple.com/en-us/guide/mac-help/mchlad96d366/mac)
@@ -89,13 +91,11 @@ The icon appears while the app is running. To have it appear after signing in, e
 
 Codex Limit Tray starts your local `codex app-server` and reads `account/rateLimits/read`. Codex handles authentication; the tray app never reads credential files. Successful polls run every 30 seconds; failures back off to five minutes. Each poll currently starts a short-lived app-server process.
 
-When Codex reports earned resets, the dashboard shows the available count and expiration dates when provided. Lists with more than five entries scroll within their own section. “Reset…” spends one reset after confirmation, then refreshes the limits.
-
 The app has **no analytics** and does not save quota values. Update checks contact GitHub without sending Codex credentials, account details or quota values. Preferences live in `CodexLimitTray/fyne-preview.json` under `%APPDATA%` (Windows) or `~/Library/Application Support` (macOS). Diagnostic paths may contain your username; redact them before sharing. See [Security](SECURITY.md).
 
 ## Build or try a demo
 
-The application is written in Go and Fyne, with no WebView. Use Go 1.26+ and a CGO-compatible toolchain. On Windows you need MinGW/GCC with `windres` and PowerShell:
+The application is written in Go and Fyne, with no WebView. Use Go 1.27.4+ and a CGO-compatible toolchain. On Windows you need MinGW/GCC with `windres` and PowerShell:
 
 ```powershell
 .\build.ps1 -Preview

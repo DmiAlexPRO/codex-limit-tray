@@ -920,7 +920,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
-===== golang.org/x/image v0.24.0 / LICENSE =====
+===== golang.org/x/image v0.48.0 / LICENSE =====
 
 Copyright 2009 The Go Authors.
 
@@ -951,7 +951,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-===== golang.org/x/net v0.35.0 / LICENSE =====
+===== golang.org/x/net v0.62.0 / LICENSE =====
 
 Copyright 2009 The Go Authors.
 
@@ -982,7 +982,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-===== golang.org/x/sys v0.30.0 / LICENSE =====
+===== golang.org/x/sys v0.50.0 / LICENSE =====
 
 Copyright 2009 The Go Authors.
 
@@ -1013,7 +1013,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-===== golang.org/x/text v0.22.0 / LICENSE =====
+===== golang.org/x/text v0.44.0 / LICENSE =====
 
 Copyright 2009 The Go Authors.
 

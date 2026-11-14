@@ -7,6 +7,7 @@ This file records user-facing changes. Release versions follow Semantic Versioni
 - Give each color button its own label and keep scrollbars clear of controls.
 - Keep the color dialog, text editing menu and reset confirmation in the selected app language.
 - Check the rendered settings and key dialogs across all 29 languages.
+- Updated both READMEs and the build and update guides to match the current app.
 
 See the [3.4.4 release notes](docs/releases/v3.4.4.md).
 
