@@ -28,6 +28,8 @@ On Windows, `build.ps1 -Preview` runs the full build and generates UI screenshot
 
 ## Platform changes
 
+Treat the Windows portable ZIP and installed Setup edition as separate modes. Verify both when changing the UI or behavior. The portable edition checks for newer versions and opens the release on GitHub; only the installed edition can download and apply updates in the app.
+
 Autostart must remain per-user and require no administrator privileges. Test enable, disable, application relocation and a path containing spaces. macOS pull requests should state which behaviors were checked on physical hardware.
 
 ## Localization

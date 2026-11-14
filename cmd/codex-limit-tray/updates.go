@@ -73,45 +73,36 @@ func (c *updateController) result() ui.UpdateState {
 		return ui.UpdateState{Stage: ui.UpdateIdle, MessageKey: "noRelease"}
 	}
 	s := ui.UpdateState{Stage: ui.UpdateCurrent, Version: r.Version, Notes: r.Notes}
-	if !r.IsNewer() && c.installed {
+	if !r.IsNewer() {
 		return s
 	}
-	if r.IsNewer() {
-		s.Stage = ui.UpdateAvailable
-	}
+	s.Stage = ui.UpdateAvailable
 	switch {
+	case runtime.GOOS == "windows" && !c.installed:
+		s.ReleasePage = r.PageURL()
 	case runtime.GOOS != "windows" || runtime.GOARCH != "amd64":
-		if r.IsNewer() {
-			s.MessageKey = "manualInstall"
-		}
+		s.MessageKey = "manualInstall"
 	case !r.HasInstaller():
 		s.MessageKey = "noInstaller"
 	case !update.InstallKeyConfigured():
 		s.MessageKey = "noKey"
 	default:
 		s.CanInstall = true
-		if !r.IsNewer() {
-			s.MessageKey = "portableCurrent"
-		}
 	}
 	return s
 }
 
 func (c *updateController) install(automatic bool) {
-	if c.busy || c.ctx.Err() != nil || !c.result().CanInstall {
+	if !c.installed || c.busy || c.ctx.Err() != nil || !c.result().CanInstall {
 		return
 	}
 	c.busy = true
 	state := c.result()
 	state.Stage, state.CanInstall, state.MessageKey = ui.UpdateInstalling, false, ""
 	c.render(state)
-	download := update.Download
-	if !c.installed {
-		download = update.DownloadForInstall
-	}
 	release := c.release
 	c.workers.Go(func() {
-		path, err := download(c.ctx, release)
+		path, err := update.Download(c.ctx, release)
 		// If the app quits before Fyne dispatches the completion, do not
 		// strand the downloaded executable or launch it during shutdown.
 		discard := func() {

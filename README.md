@@ -64,10 +64,12 @@ The download button follows the latest **stable Windows release**, not previews.
 | Edition | Choose it if… | How it updates |
 | --- | --- | --- |
 | **Windows x64 · Setup** | You want a Start menu entry and updates without reinstalling by hand. | The stable edition checks for stable releases at startup by default; verifies a newer installer, installs it and restarts in the tray. You can switch to manual checks. |
-| **Windows x64 · portable ZIP** | You want to run the EXE from a folder without installing. | No automatic check or installation. Replace the portable copy yourself, or explicitly choose to install the normal edition. Your settings carry over. |
+| **Windows x64 · portable ZIP** | You want to run the EXE from a folder without installing. | Checks at startup and in **Settings → Updates**. If a newer version is available, **Download from GitHub** opens its release page. Download the ZIP and replace the EXE manually; your settings carry over. |
 | **macOS · experimental** | You want to try the app on Apple Silicon (`arm64`) or Intel (`x86_64`) with macOS 13 or later. Choose the matching ZIP when available. | Unzip the `.app` and install or replace it manually. In-app checks show release notes only. Bundles are unsigned and not notarized; real-hardware acceptance is pending. |
 
-In **Settings → Updates**, read what changed, check manually, or turn off **Auto-install updates at startup**. With auto-update off, there is no startup check. **Refresh limits** on the main screen only refreshes your quota. In-app installer updates are checked against an embedded Ed25519 public key; this does not authenticate your first download. See [how updates are verified](docs/UPDATES.md).
+In **Settings → Updates**, read what changed or check manually. In the installed edition, turning off automatic installation also disables startup checks. **Refresh limits** on the main screen only refreshes your quota. In-app installer updates are checked against an embedded Ed25519 public key; this does not authenticate your first download. See [how updates are verified](docs/UPDATES.md).
+
+The portable EXE does not have an Authenticode publisher signature either, so Windows may warn when opening it. Download the ZIP only from this project's GitHub Releases.
 
 ## Using the tray and widget
 

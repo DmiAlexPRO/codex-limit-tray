@@ -207,14 +207,13 @@ func TestDownload(t *testing.T) {
 	tmp := filepath.Join(cache, "CodexLimitTray", "updates")
 	for _, tc := range []struct {
 		name, current, payload, signature string
-		allowCurrent, ok                  bool
+		ok                                bool
 	}{
-		{"newer", "1.0.0", installer, sign("1.1.0"), false, true},
-		{"tampered", "1.0.0", installer + "?", sign("1.1.0"), false, false},
-		{"relabelled", "1.0.0", installer, sign("1.0.1"), false, false},
-		{"bad signature encoding", "1.0.0", installer, "garbage", false, false},
-		{"same no update", "1.1.0", installer, sign("1.1.0"), false, false},
-		{"explicit portable install", "1.1.0", installer, sign("1.1.0"), true, true},
+		{"newer", "1.0.0", installer, sign("1.1.0"), true},
+		{"tampered", "1.0.0", installer + "?", sign("1.1.0"), false},
+		{"relabelled", "1.0.0", installer, sign("1.0.1"), false},
+		{"bad signature encoding", "1.0.0", installer, "garbage", false},
+		{"same no update", "1.1.0", installer, sign("1.1.0"), false},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			c := mock(tc.current, func(req *http.Request) (*http.Response, error) {
@@ -236,7 +235,7 @@ func TestDownload(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			path, err := c.download(context.Background(), r, tc.allowCurrent)
+			path, err := c.download(context.Background(), r)
 			if tc.ok != (err == nil) {
 				t.Fatalf("path=%s err=%v", path, err)
 			}
@@ -259,12 +258,12 @@ func TestDownload(t *testing.T) {
 		return nil, nil
 	})
 	r := &Release{Version: "1.1.0", tag: "v1.1.0", repository: c.repo, hasAssets: true}
-	if _, err := c.download(context.Background(), r, false); err == nil {
+	if _, err := c.download(context.Background(), r); err == nil {
 		t.Fatal("accepted missing embedded key")
 	}
 	c.publicKey = base64.StdEncoding.EncodeToString(pub)
 	for _, invalid := range []*Release{nil, {Version: "1.1.0"}, {Version: "1.1.0", repository: c.repo, tag: "v2.0.0"}, {Version: "0.9.0", tag: "v0.9.0", repository: c.repo, hasAssets: true}, {Version: "1.1.0", tag: "v1.1.0", repository: c.repo}} {
-		if _, err := c.download(context.Background(), invalid, true); err == nil {
+		if _, err := c.download(context.Background(), invalid); err == nil {
 			t.Fatal("accepted invalid release")
 		}
 	}

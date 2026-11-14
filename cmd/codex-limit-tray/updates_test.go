@@ -109,7 +109,8 @@ func TestUpdatesThroughSignedDownload(t *testing.T) {
 		{name: "automatic", version: "1.1.0", wantLaunch: true},
 		{name: "opt out before launch", version: "1.1.0", optOut: true},
 		{name: "invalid signature", version: "1.1.0", badSignature: true},
-		{name: "portable exact version via button", version: "1.0.0", portable: true, wantLaunch: true},
+		{name: "portable newer release", version: "1.1.0", portable: true},
+		{name: "portable already current", version: "1.0.0", portable: true},
 		{name: "already current", version: "1.0.0"},
 	} {
 		t.Run(scenario.name, func(t *testing.T) {
@@ -162,19 +163,28 @@ func TestUpdatesThroughSignedDownload(t *testing.T) {
 					t.Fatal("worker did not dispatch its result")
 				}
 			}
-			if scenario.portable {
-				tap("Check for updates")
-			} else {
-				c.check(true)
-			}
+			c.check(true)
 			complete()
 			if scenario.portable {
-				if c.busy || *requests != 1 || launches != 0 || last.Stage != ui.UpdateCurrent || last.Notes != "Release notes" {
-					t.Fatalf("portable updated without consent or lost notes: %+v", last)
+				newer := scenario.version != update.Version
+				if c.busy || *requests != 1 || launches != 0 || last.CanInstall ||
+					(last.Stage == ui.UpdateAvailable) != newer || last.Notes != "Release notes" {
+					t.Fatalf("portable must only check for updates: %+v", last)
 				}
-				tap("Install app")
+				if (updateControl(w.Content(), "Download from GitHub") != nil) != newer ||
+					updateControl(w.Content(), "Install update") != nil {
+					t.Fatal("portable must offer only a browser link and only for a newer release")
+				}
+				if newer && (last.ReleasePage == nil || last.ReleasePage.String() != "https://github.com/example/preview/releases/tag/v1.1.0") {
+					t.Fatalf("wrong release URL: %v", last.ReleasePage)
+				}
+				c.install(false)
+				if c.busy || *requests != 1 {
+					t.Fatal("portable started an installer download")
+				}
+				return
 			}
-			if !scenario.portable && scenario.version == update.Version {
+			if scenario.version == update.Version {
 				if c.busy || last.Stage != ui.UpdateCurrent || last.CanInstall || last.Notes != "Release notes" || *requests != 1 {
 					t.Fatalf("unexpected reinstallation of current release: %+v", last)
 				}

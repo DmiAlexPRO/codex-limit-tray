@@ -2,7 +2,7 @@
 
 **Installed Windows x64:** checks once on each launch (including launch at login). Auto-install is on by default and can be turned off in **Settings → Updates**. When disabled, there is no startup check. Manual checks show the version and the plain-text body of the GitHub Release. One click downloads and applies it without asking the user to exit or find an installer. A successful update restarts in the tray.
 
-**Portable Windows x64:** does not check or install automatically. The explicit install button converts the latest published version, including the exact current one, into a per-user installation. It keeps settings and leaves the original portable EXE alone. **macOS:** manual checks and notes only. **Demo:** no update network access, download or installation.
+**Portable Windows x64:** checks release metadata on launch and on request. When a newer version is available, **Download from GitHub** opens that release in the browser. The app never downloads or runs an installer. To update, download the ZIP, quit the portable app and replace its EXE; settings are kept. **macOS:** manual checks and notes only. **Demo:** no update network access, download or installation.
 
 The installed copy is identified by a marker shipped only by Setup. The updater never overwrites its running binary: it stages and verifies a complete installer, then hands off to Inno Setup. The installer waits for the caller to exit. Updates keep the existing settings and autostart preference. On download, verification or handoff failure the running copy is not replaced. If a completed download's installation fails after exit, relaunch from Start, or reinstall a known-good release manually; there is no automatic post-install rollback.
 
