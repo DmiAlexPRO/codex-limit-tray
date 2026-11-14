@@ -2,6 +2,14 @@
 
 This file records user-facing changes. Release versions follow Semantic Versioning.
 
+## 3.4.3 — Czech and Korean
+
+- Added Czech and Korean to the app and Windows installer, bringing the app to 29 interface languages.
+- Translated earned limit reset messages in all supported languages.
+- Localized the project website in 11 languages, with English as the default.
+
+See the [3.4.3 release notes](docs/releases/v3.4.3.md).
+
 ## 3.4.2 — Switch languages without restarting
 
 - Apply the selected language immediately to the main window, settings and tray menu.
