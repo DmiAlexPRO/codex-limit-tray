@@ -9,8 +9,8 @@ import (
 )
 
 func TestCatalogs(t *testing.T) {
-	if len(catalogs) != 27 || len(Languages()) != 27 {
-		t.Fatalf("want 27 unique languages, got %d", len(catalogs))
+	if len(catalogs) != len(Languages()) {
+		t.Fatal("duplicate language code")
 	}
 	format := regexp.MustCompile(`%[^% ]*?[dfs]`)
 	names := make(map[string]bool)
@@ -27,11 +27,7 @@ func TestCatalogs(t *testing.T) {
 				}
 			}
 			for key, english := range catalogs[English] {
-				value, present := messages[key]
-				// Earned reset messages fall back to English outside the initial locales.
-				if !present && language.Code != English && language.Code != "ru" && strings.HasPrefix(key, "earnedReset") {
-					continue
-				}
+				value := messages[key]
 				if strings.TrimSpace(value) == "" || !utf8.ValidString(value) {
 					t.Errorf("missing or invalid translation: %s", key)
 				}
@@ -50,7 +46,9 @@ func TestMatch(t *testing.T) {
 	}{
 		{nil, "en"},
 		{[]string{"en-GB", "ru"}, "en"},
-		{[]string{"ko-KR", "RU_ru.UTF-8"}, "ru"},
+		{[]string{"ko-KR", "RU_ru.UTF-8"}, "ko"},
+		{[]string{"cs-CZ"}, "cs"},
+		{[]string{"zz-ZZ", "RU_ru.UTF-8"}, "ru"},
 		{[]string{"pt-BR"}, "pt"},
 		{[]string{"ar-EG"}, "arz"},
 		{[]string{"ar-SA"}, "ar"},

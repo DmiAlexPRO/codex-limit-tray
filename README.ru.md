@@ -1,6 +1,6 @@
 # Codex Limit Tray
 
-[English](README.md)
+[Сайт проекта](https://dmialexpro.github.io/codex-limit-tray/ru/) · [English README](README.md)
 
 **Проверяйте лимиты Codex в трее Windows — на значке виден остаток в процентах.** Нажмите на него, чтобы посмотреть остаток и время сброса для пятичасового и недельного лимитов, или оставьте компактный виджет поверх рабочих окон.
 
@@ -17,7 +17,7 @@
 
 ![Четыре варианта значка в трее — цифры, бары, сегменты и кольца — на примере одних и тех же данных: осталось 82% пятичасового лимита и 57% недельного.](docs/images/tray-modes.png)
 
-Интерфейс доступен на **27 языках**, в том числе на русском и английском. При установке или первом запуске приложение выбирает поддерживаемый язык системы. Если подходящего языка нет, используется английский. Чтобы сменить язык, нажмите шестерёнку → **Оформление → Язык** и выберите язык. Окно и меню в трее обновятся сразу.
+Интерфейс доступен на **29 языках**. При установке или первом запуске приложение выбирает поддерживаемый язык системы, а если подходящего нет, использует английский. Чтобы сразу сменить язык окна и меню в трее, нажмите шестерёнку → **Оформление → Язык**.
 
 ![English](https://img.shields.io/badge/English-EN-2F7668)
 ![Simplified Chinese](https://img.shields.io/badge/%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87-ZH-2F7668)
@@ -43,6 +43,8 @@
 ![Ukrainian](https://img.shields.io/badge/%D0%A3%D0%BA%D1%80%D0%B0%D1%97%D0%BD%D1%81%D1%8C%D0%BA%D0%B0-UK-2F7668)
 ![Polish](https://img.shields.io/badge/Polski-PL-2F7668)
 ![Italian](https://img.shields.io/badge/Italiano-IT-2F7668)
+![Czech](https://img.shields.io/badge/%C4%8Ce%C5%A1tina-CS-2F7668)
+![Korean](https://img.shields.io/badge/%ED%95%9C%EA%B5%AD%EC%96%B4-KO-2F7668)
 ![Turkish](https://img.shields.io/badge/T%C3%BCrk%C3%A7e-TR-2F7668)
 ![Kyrgyz](https://img.shields.io/badge/%D0%9A%D1%8B%D1%80%D0%B3%D1%8B%D0%B7%D1%87%D0%B0-KY-2F7668)
 ![Armenian](https://img.shields.io/badge/%D5%80%D5%A1%D5%B5%D5%A5%D6%80%D5%A5%D5%B6-HY-2F7668)

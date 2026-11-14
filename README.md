@@ -1,6 +1,6 @@
 # Codex Limit Tray
 
-[Russian](README.ru.md)
+[Project website](https://dmialexpro.github.io/codex-limit-tray/) · [Русский README](README.ru.md)
 
 **Track your Codex usage limits in the Windows system tray.** The tray icon shows your remaining quota; open it to see when your five-hour and weekly limits reset, or keep a small widget above your windows.
 
@@ -17,7 +17,7 @@ Free under the [MIT License](LICENSE). Requires a local Codex installation signe
 
 ![Four tray icon styles — numbers, bars, segments and rings — with sample quotas: 82% remaining in the five-hour window and 57% in the weekly window.](docs/images/tray-modes.en.png)
 
-The app has **27 interface languages**. It uses a supported system language on installation or first launch and falls back to English. To choose another language, open the gear → **Appearance → Language**, and select it. The interface and tray menu update immediately.
+The app has **29 interface languages**. It uses a supported system language on installation or first launch and falls back to English. Open the gear → **Appearance → Language** to change the interface and tray menu immediately.
 
 ![English](https://img.shields.io/badge/English-EN-2F7668)
 ![Simplified Chinese](https://img.shields.io/badge/%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87-ZH-2F7668)
@@ -43,6 +43,8 @@ The app has **27 interface languages**. It uses a supported system language on i
 ![Ukrainian](https://img.shields.io/badge/%D0%A3%D0%BA%D1%80%D0%B0%D1%97%D0%BD%D1%81%D1%8C%D0%BA%D0%B0-UK-2F7668)
 ![Polish](https://img.shields.io/badge/Polski-PL-2F7668)
 ![Italian](https://img.shields.io/badge/Italiano-IT-2F7668)
+![Czech](https://img.shields.io/badge/%C4%8Ce%C5%A1tina-CS-2F7668)
+![Korean](https://img.shields.io/badge/%ED%95%9C%EA%B5%AD%EC%96%B4-KO-2F7668)
 ![Turkish](https://img.shields.io/badge/T%C3%BCrk%C3%A7e-TR-2F7668)
 ![Kyrgyz](https://img.shields.io/badge/%D0%9A%D1%8B%D1%80%D0%B3%D1%8B%D0%B7%D1%87%D0%B0-KY-2F7668)
 ![Armenian](https://img.shields.io/badge/%D5%80%D5%A1%D5%B5%D5%A5%D6%80%D5%A5%D5%B6-HY-2F7668)

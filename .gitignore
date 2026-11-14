@@ -2,6 +2,7 @@
 /.tools/
 /.cache/
 /.local/
+/AGENTS.md
 /player-visualization/
 node_modules/
 __pycache__/

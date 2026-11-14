@@ -23,13 +23,18 @@ On Windows, `build.ps1 -Preview` runs the full build and generates UI screenshot
 - Treat missing data as unknown, not zero or full.
 - Keep protocol, policy, rendering and native platform responsibilities separate.
 - Check both themes, 100/150/200% scaling and keyboard access for UI changes.
-- Keep Russian UI wording consistent and English documentation clear.
 - Preserve third-party attribution and review license compatibility before adding dependencies or assets.
 - Use Conventional Commits, for example `fix: recover after network reconnect`.
 
 ## Platform changes
 
 Autostart must remain per-user and require no administrator privileges. Test enable, disable, application relocation and a path containing spaces. macOS pull requests should state which behaviors were checked on physical hardware.
+
+## Localization
+
+English is the source language. Add or update app strings in every catalog in `internal/i18n/locales/`; `go test ./...` checks coverage and placeholders. Keep both README files up to date when changing public instructions.
+
+For GitHub Pages, update all 11 translations in `scripts/pages/locales.json`, then run `python scripts/build-pages.py` and commit the generated HTML and sitemap. Use `python scripts/build-pages.py --check` to verify they are current.
 
 ## Reporting security issues
 
