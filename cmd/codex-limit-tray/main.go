@@ -1,14 +1,15 @@
 package main
 
 import (
-	"codexlimittray/internal/i18n"
 	"context"
+	_ "embed"
 	"flag"
 	"runtime"
 	"sync"
 	"time"
 
 	"codexlimittray/internal/codex"
+	"codexlimittray/internal/i18n"
 	"codexlimittray/internal/platform"
 	"codexlimittray/internal/quota"
 	"codexlimittray/internal/settings"
@@ -19,6 +20,11 @@ import (
 	"fyne.io/fyne/v2/driver/desktop"
 	"fyne.io/systray"
 )
+
+// The 128px image from packaging/app.ico, also used as the window icon.
+//
+//go:embed app-icon.png
+var appIconPNG []byte
 
 func main() {
 	demo := flag.Bool("demo", false, "use clearly labelled sample data, no API access")
@@ -33,6 +39,7 @@ func main() {
 		return
 	}
 	a := app.NewWithID("io.codexlimittray.preview")
+	a.SetIcon(fyne.NewStaticResource("app-icon.png", appIconPNG))
 	w := platform.NewMainWindow(a, "Codex Limits")
 	ctx, shutdown := context.WithCancel(context.Background())
 	defer shutdown()
@@ -158,7 +165,7 @@ func main() {
 		view.SetUpdateState(ui.UpdateState{MessageKey: "localBuild"})
 	default:
 		check = func() { updates.check(false) }
-		if runtime.GOOS == "windows" && runtime.GOARCH == "amd64" && update.InstallKeyConfigured() {
+		if installed && runtime.GOOS == "windows" && runtime.GOARCH == "amd64" && update.InstallKeyConfigured() {
 			install = func() { updates.install(false) }
 		}
 		view.ConfigureUpdates(update.Version, installed, check, install)
@@ -166,7 +173,6 @@ func main() {
 	if !*demo && runtime.GOOS == "windows" {
 		workers.Go(update.Cleanup)
 	}
-	a.SetIcon(ui.IconResource(nil, s))
 	if desk, ok := a.(desktop.App); ok {
 		openSettings := func() { view.ShowSettings(); show() }
 		updateTrayMenu = trayMenuUpdater(desk.SetSystemTrayMenu, show, request, view.ShowWidget, openSettings, exit)
@@ -189,7 +195,8 @@ func main() {
 	if !*minimized {
 		show()
 	}
-	if installed && warning == nil && s.AutoUpdate && install != nil {
+	portable := runtime.GOOS == "windows" && !installed
+	if check != nil && warning == nil && (portable || (install != nil && s.AutoUpdate)) {
 		updates.check(true)
 	}
 	a.Run()

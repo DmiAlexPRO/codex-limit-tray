@@ -2,6 +2,13 @@
 
 This file records user-facing changes. Release versions follow Semantic Versioning.
 
+## 3.4.5 — Portable updates and Windows taskbar icon
+
+- The Windows portable app checks for newer versions at startup and opens the matching GitHub release on request instead of downloading an installer.
+- Fixed the generic taskbar icon on Windows.
+
+See the [3.4.5 release notes](docs/releases/v3.4.5.md).
+
 ## 3.4.4 — Clearer color controls and consistent translations
 
 - Give each color button its own label and keep scrollbars clear of controls.

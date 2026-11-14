@@ -42,7 +42,7 @@
 - Four indicator styles, 0/100%, both themes, system-theme changes, threshold colors and sound.
 - Autostart enable/disable, log out/in, paths containing spaces and moving the portable application. Confirm that disabling removes the Windows Run value or macOS LaunchAgent.
 - Windows: Explorer restart and behavior after replacing the executable.
-- On a disposable Windows account, install release A without elevation, change a setting, then publish a signed B in a separate test repo/key. Verify the default startup update and tray restart, that B shows its notes and does not install B again, manual-only mode after opting out, and clean uninstall of the Run entry. A portable A must not install anything until clicked. Test offline, missing/corrupt signature and locked files.
+- On a disposable Windows account, install release A without elevation, change a setting, then publish a signed B in a separate test repo/key. Verify the default startup update and tray restart, that B shows its notes and does not install B again, manual-only mode after opting out, and clean uninstall of the Run entry. A portable A must show a GitHub link for B without downloading or installing anything. Test offline, missing/corrupt signature and locked files.
 - macOS: CI checks a macOS 13.0 deployment target for both Intel and Apple Silicon. On both architectures, check the menu bar, accessory mode, always-on-top behavior and LaunchAgent on real hardware.
 - Signatures, notarization and SmartScreen/Gatekeeper presentation. Never describe unsigned builds as signed or trusted.
 

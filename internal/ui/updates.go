@@ -63,9 +63,6 @@ func (v *View) ConfigureUpdates(currentVersion string, installed bool, check, in
 		}
 	})
 	p.install = highButton(v.tr("installUpdate"), theme.DownloadIcon(), install)
-	if !installed {
-		p.install.SetText(v.tr("installApp"))
-	}
 	p.automatic = widget.NewCheck(v.tr("autoUpdate"), nil)
 	p.automatic.Checked = installed && v.settings.AutoUpdate
 	p.automatic.OnChanged = func(enabled bool) {
@@ -82,6 +79,7 @@ func (v *View) ConfigureUpdates(currentVersion string, installed bool, check, in
 	note := v.tr("autoUpdateHint")
 	if !installed && runtime.GOOS == "windows" {
 		note = v.tr("portableHint")
+		p.automatic.Hide()
 	}
 	if runtime.GOOS != "windows" {
 		note = v.tr("manualHint")
@@ -138,6 +136,11 @@ func (v *View) SetUpdateState(s UpdateState) {
 	}
 	p.status.SetText(message)
 	if s.ReleasePage != nil {
+		label := "openReleasePage"
+		if s.Stage == UpdateAvailable {
+			label = "downloadFromGitHub"
+		}
+		p.openRelease.SetText(v.tr(label))
 		p.openRelease.Show()
 	} else {
 		p.openRelease.Hide()
@@ -148,7 +151,7 @@ func (v *View) SetUpdateState(s UpdateState) {
 	busy := s.Stage == UpdateChecking || s.Stage == UpdateInstalling
 	setEnabled(p.check, !busy && p.check.OnTapped != nil)
 	setEnabled(p.automatic, p.installed && p.install.OnTapped != nil)
-	if (s.CanInstall && p.install.OnTapped != nil) || s.Stage == UpdateInstalling {
+	if p.installed && ((s.CanInstall && p.install.OnTapped != nil) || s.Stage == UpdateInstalling) {
 		p.install.Show()
 		setEnabled(p.install, !busy)
 	} else {

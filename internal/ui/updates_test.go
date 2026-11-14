@@ -62,21 +62,30 @@ func TestUpdatesPage(t *testing.T) {
 	}
 }
 
-func TestPortableUpdateRequiresManualAction(t *testing.T) {
-	a := test.NewApp()
+func TestPortableUpdateOpensGitHub(t *testing.T) {
+	a := &settingsLinkApp{App: test.NewApp()}
 	defer a.Quit()
 	w := a.NewWindow("portable")
-	v := NewView(a, w, settings.Default(), func() {}, func() {}, func(settings.Settings) error { t.Fatal("settings modified"); return nil })
-	installs := 0
-	v.ConfigureUpdates("1.0.0", false, func() {}, func() { installs++ })
-	v.SetUpdateState(UpdateState{Stage: UpdateCurrent, Version: "1.0.0", Notes: "Текущая версия", CanInstall: true})
+	s := settings.Default()
+	s.Language = "ru"
+	v := NewView(a, w, s, func() {}, func() {}, func(settings.Settings) error { t.Fatal("settings modified"); return nil })
+	v.ConfigureUpdates("1.0.0", false, func() {}, func() { t.Fatal("portable installer invoked") })
+	v.ShowUpdates()
+	w.Show()
 	p := v.updates
-	if !p.automatic.Disabled() || p.automatic.Checked || !p.install.Visible() || p.install.Disabled() || installs != 0 {
-		t.Fatal("portable mode must offer, not perform installation even when the version matches")
+	link := &url.URL{Scheme: "https", Host: "github.com", Path: "/org/repo/releases/tag/v1.1.0"}
+	v.SetUpdateState(UpdateState{Stage: UpdateAvailable, Version: "1.1.0", ReleasePage: link, CanInstall: true})
+	if !p.automatic.Disabled() || p.install.Visible() || !p.openRelease.Visible() ||
+		p.openRelease.Text != "Скачать с GitHub" || a.opened != "" || w.Canvas().Capture().Bounds().Empty() {
+		t.Fatal("portable mode must show a GitHub button without opening it automatically")
 	}
-	test.Tap(p.install)
-	if installs != 1 {
-		t.Fatal("portable setup did not start")
+	test.Tap(p.openRelease)
+	if a.opened != link.String() {
+		t.Fatalf("opened %q, want %q", a.opened, link)
+	}
+	v.SetUpdateState(UpdateState{Stage: UpdateCurrent, Version: "1.0.0"})
+	if p.openRelease.Visible() || p.install.Visible() {
+		t.Fatal("current portable version must not offer a download")
 	}
 }
 

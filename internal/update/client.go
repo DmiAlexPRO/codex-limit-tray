@@ -44,6 +44,11 @@ type Release struct {
 func (r *Release) IsNewer() bool      { return r != nil && r.newer }
 func (r *Release) HasInstaller() bool { return r != nil && r.hasAssets }
 
+// PageURL uses the configured repository and validated release tag, not a URL from release metadata.
+func (r *Release) PageURL() *url.URL {
+	return &url.URL{Scheme: "https", Host: "github.com", Path: "/" + r.repository + "/releases/tag/" + r.tag}
+}
+
 func InstallKeyConfigured() bool {
 	_, err := decodeKey(PublicKey)
 	return err == nil
@@ -273,16 +278,10 @@ func (c client) bytes(ctx context.Context, endpoint string, limit int64) ([]byte
 // Download returns a unique verified temporary EXE. The caller owns it and
 // must remove it after the installer exits. Partial downloads are never returned.
 func Download(ctx context.Context, r *Release) (string, error) {
-	return configured().download(ctx, r, false)
+	return configured().download(ctx, r)
 }
 
-// DownloadForInstall also allows the exact current version for explicit first
-// installation of a portable copy. Never use this function for automatic updates.
-func DownloadForInstall(ctx context.Context, r *Release) (string, error) {
-	return configured().download(ctx, r, true)
-}
-
-func (c client) download(ctx context.Context, r *Release, allowCurrent bool) (string, error) {
+func (c client) download(ctx context.Context, r *Release) (string, error) {
 	current, err := c.validate()
 	if err != nil {
 		return "", err
@@ -295,7 +294,7 @@ func (c client) download(ctx context.Context, r *Release, allowCurrent bool) (st
 		return "", errors.New("check the release again")
 	}
 	v, ok := parseVersion(r.Version)
-	if !ok || (v.compare(current) <= 0 && !(allowCurrent && r.Version == c.current)) || (len(current.pre) == 0 && len(v.pre) != 0) {
+	if !ok || v.compare(current) <= 0 || (len(current.pre) == 0 && len(v.pre) != 0) {
 		return "", errors.New("incompatible update version")
 	}
 	if !r.hasAssets {
