@@ -86,7 +86,7 @@ func (v *View) ConfigureUpdates(currentVersion string, installed bool, check, in
 	if runtime.GOOS != "windows" {
 		note = v.tr("manualHint")
 	}
-	p.tab = container.NewTabItem(v.tr("updates"), container.NewVScroll(container.NewVBox(
+	p.tab = container.NewTabItem(v.tr("updates"), scrollPage(container.NewVBox(
 		text(v.tr("appUpdates"), 22, true),
 		wrapped(v.tr("currentVersion", currentVersion)), p.version, p.status,
 		p.install, p.openRelease, p.check, widget.NewSeparator(), p.automatic, wrapped(note),

@@ -1,6 +1,5 @@
 {
   "language": "Jazyk",
-  "restart": "Chcete-li použít nový jazyk, restartujte Codex Limit Tray.",
   "ok": "OK",
   "appearance": "Vzhled",
   "connection": "Připojení",
@@ -15,7 +14,7 @@
   "segments": "Segmenty",
   "rings": "Kruhy",
   "accent": "Barva zvýraznění",
-  "lowColor": "Barva nízkého zůstatku",
+  "lowColor": "Barva při nízkém limitu",
   "threshold": "Prahová hodnota",
   "colorBelow": "Změnit barvu pod prahem",
   "soundBelow": "Přehrát zvuk pod prahem",
@@ -24,7 +23,6 @@
   "openTaskbarSettings": "Otevřít nastavení hlavního panelu",
   "openTaskbarSettingsError": "Nastavení se nepodařilo otevřít. Klikněte pravým tlačítkem na hlavní panel a vyberte Nastavení hlavního panelu.",
   "menuBarIconHelp": "Když je aplikace spuštěná, ikona se zobrazuje v řádku nabídek. Pokud je v macOS 26 nebo novějším skrytá, zkontrolujte Nastavení systému → Řádek nabídek → Povolit v řádku nabídek.",
-  "choose": "Vybrat…",
   "chooseColor": "Vybrat barvu indikátoru",
   "autosave": "Změny se ukládají automaticky. Při přihlášení se aplikace spustí v oznamovací oblasti.",
   "preview": "Ukázková ikona: 57 / 82. Nejde o údaje účtu.",
@@ -104,5 +102,13 @@
   "version": "Aktualizujte Codex: nekompatibilní odpověď serveru",
   "codexMissing": "Codex nebyl nalezen. Nastavte jeho cestu v Nastavení.",
   "codexPath": "Zadejte úplnou cestu ke spustitelnému souboru Codexu.",
-  "codexRead": "Limity se nepodařilo načíst. Zkontrolujte připojení a přihlášení ke Codexu."
+  "codexRead": "Limity se nepodařilo načíst. Zkontrolujte připojení a přihlášení ke Codexu.",
+  "colorAdvanced": "Pokročilé",
+  "confirm": "Potvrdit",
+  "cut": "Vyjmout",
+  "copy": "Kopírovat",
+  "paste": "Vložit",
+  "selectAll": "Vybrat vše",
+  "undo": "Zpět",
+  "redo": "Znovu"
 }

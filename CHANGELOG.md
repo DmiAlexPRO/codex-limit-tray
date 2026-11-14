@@ -2,6 +2,14 @@
 
 This file records user-facing changes. Release versions follow Semantic Versioning.
 
+## 3.4.4 — Clearer color controls and consistent translations
+
+- Give each color button its own label and keep scrollbars clear of controls.
+- Keep the color dialog, text editing menu and reset confirmation in the selected app language.
+- Check the rendered settings and key dialogs across all 29 languages.
+
+See the [3.4.4 release notes](docs/releases/v3.4.4.md).
+
 ## 3.4.3 — Czech and Korean
 
 - Added Czech and Korean to the app and Windows installer, bringing the app to 29 interface languages.

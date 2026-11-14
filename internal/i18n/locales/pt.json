@@ -1,6 +1,5 @@
 {
   "language": "Idioma",
-  "restart": "Reinicie o Codex Limit Tray para aplicar o novo idioma.",
   "ok": "OK",
   "appearance": "Aparência",
   "connection": "Conexão",
@@ -24,7 +23,6 @@
   "openTaskbarSettings": "Abrir configurações da barra de tarefas",
   "openTaskbarSettingsError": "Não foi possível abrir as configurações. Clique com o botão direito na barra de tarefas e selecione Configurações da barra de tarefas.",
   "menuBarIconHelp": "O ícone aparece na barra de menus enquanto o app está aberto. Se estiver oculto no macOS 26 ou posterior, verifique Ajustes do Sistema → Barra de Menus.",
-  "choose": "Escolher…",
   "chooseColor": "Escolha a cor do indicador",
   "autosave": "As alterações são salvas automaticamente. Ao entrar no sistema, o app abre na bandeja.",
   "preview": "Exemplo de ícone: 57 / 82. Não são dados da conta.",
@@ -36,7 +34,7 @@
   "earnedResetConfirm": "Usar redefinição",
   "earnedResetCancel": "Cancelar",
   "earnedResetPrompt": "Usar uma redefinição disponível nos limites do Codex?",
-  "earnedResetPending": "A redefinir…",
+  "earnedResetPending": "Redefinindo…",
   "earnedResetDone": "Limite redefinido.",
   "earnedResetNotNeeded": "Não há limites elegíveis para redefinição.",
   "earnedResetUnavailable": "Não há redefinições disponíveis.",
@@ -104,5 +102,13 @@
   "version": "Atualize o Codex: resposta incompatível do servidor",
   "codexMissing": "Codex não encontrado. Informe o caminho nas configurações",
   "codexPath": "Informe o caminho completo do executável do Codex",
-  "codexRead": "Não foi possível obter os limites. Verifique a rede e sua sessão no Codex"
+  "codexRead": "Não foi possível obter os limites. Verifique a rede e sua sessão no Codex",
+  "colorAdvanced": "Avançado",
+  "confirm": "Confirmar",
+  "cut": "Cortar",
+  "copy": "Copiar",
+  "paste": "Colar",
+  "selectAll": "Selecionar tudo",
+  "undo": "Desfazer",
+  "redo": "Refazer"
 }

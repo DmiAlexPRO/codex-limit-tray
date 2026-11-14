@@ -1,6 +1,5 @@
 {
   "language": "언어",
-  "restart": "새 언어를 적용하려면 Codex Limit Tray를 다시 시작하세요.",
   "ok": "확인",
   "appearance": "모양",
   "connection": "연결",
@@ -24,7 +23,6 @@
   "openTaskbarSettings": "작업 표시줄 설정 열기",
   "openTaskbarSettingsError": "설정을 열 수 없습니다. 작업 표시줄을 마우스 오른쪽 버튼으로 클릭하고 작업 표시줄 설정을 선택하세요.",
   "menuBarIconHelp": "앱이 실행 중이면 메뉴 막대에 아이콘이 나타납니다. macOS 26 이상에서 보이지 않으면 시스템 설정 → 메뉴 막대에서 표시를 허용했는지 확인하세요.",
-  "choose": "선택…",
   "chooseColor": "표시기 색상 선택",
   "autosave": "변경 사항은 자동으로 저장됩니다. 로그인 시 실행하면 앱이 시스템 트레이에서 시작됩니다.",
   "preview": "아이콘 예시: 57 / 82. 실제 계정 데이터가 아닙니다.",
@@ -104,5 +102,13 @@
   "version": "Codex를 업데이트하세요. 서버 응답이 호환되지 않습니다.",
   "codexMissing": "Codex를 찾을 수 없습니다. 설정에서 경로를 지정하세요.",
   "codexPath": "Codex 실행 파일의 전체 경로를 지정하세요.",
-  "codexRead": "한도를 가져올 수 없습니다. 네트워크 연결과 Codex 로그인 상태를 확인하세요."
+  "codexRead": "한도를 가져올 수 없습니다. 네트워크 연결과 Codex 로그인 상태를 확인하세요.",
+  "colorAdvanced": "고급",
+  "confirm": "확인",
+  "cut": "잘라내기",
+  "copy": "복사",
+  "paste": "붙여넣기",
+  "selectAll": "모두 선택",
+  "undo": "실행 취소",
+  "redo": "다시 실행"
 }

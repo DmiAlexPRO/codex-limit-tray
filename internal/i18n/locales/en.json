@@ -1,6 +1,5 @@
 {
   "language": "Language",
-  "restart": "Restart Codex Limit Tray to apply the new language.",
   "ok": "OK",
   "appearance": "Appearance",
   "connection": "Connection",
@@ -24,7 +23,6 @@
   "openTaskbarSettings": "Open taskbar settings",
   "openTaskbarSettingsError": "Couldn’t open Settings. Right-click the taskbar and select Taskbar settings.",
   "menuBarIconHelp": "The icon appears in the menu bar while the app is running. If it’s hidden on macOS 26 or later, check System Settings → Menu Bar → Allow in the Menu Bar.",
-  "choose": "Choose…",
   "chooseColor": "Choose an indicator color",
   "autosave": "Changes save automatically. Starting at login opens the app in the tray.",
   "preview": "Sample icon: 57 / 82. Not account data.",
@@ -104,5 +102,13 @@
   "version": "Update Codex: incompatible server response",
   "codexMissing": "Codex not found. Set its path in Settings",
   "codexPath": "Specify the full path to the Codex executable",
-  "codexRead": "Could not get limits. Check your network and Codex sign-in"
+  "codexRead": "Could not get limits. Check your network and Codex sign-in",
+  "colorAdvanced": "Advanced",
+  "confirm": "Confirm",
+  "cut": "Cut",
+  "copy": "Copy",
+  "paste": "Paste",
+  "selectAll": "Select all",
+  "undo": "Undo",
+  "redo": "Redo"
 }

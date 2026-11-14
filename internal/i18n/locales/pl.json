@@ -1,6 +1,5 @@
 {
   "language": "Język",
-  "restart": "Uruchom ponownie Codex Limit Tray, aby zmienić język.",
   "ok": "OK",
   "appearance": "Wygląd",
   "connection": "Połączenie",
@@ -24,7 +23,6 @@
   "openTaskbarSettings": "Otwórz ustawienia paska zadań",
   "openTaskbarSettingsError": "Nie można otworzyć ustawień. Kliknij pasek zadań prawym przyciskiem myszy i wybierz Ustawienia paska zadań.",
   "menuBarIconHelp": "Ikona jest widoczna na pasku menu, gdy aplikacja działa. Jeśli jest ukryta w macOS 26 lub nowszym, sprawdź Ustawienia systemowe → Pasek menu.",
-  "choose": "Wybierz…",
   "chooseColor": "Wybierz kolor wskaźnika",
   "autosave": "Zmiany zapisują się automatycznie. Przy logowaniu aplikacja otwiera się w zasobniku systemowym.",
   "preview": "Przykładowa ikona: 57 / 82. To nie są dane konta.",
@@ -104,5 +102,13 @@
   "version": "Zaktualizuj Codex: niezgodna odpowiedź serwera",
   "codexMissing": "Nie znaleziono Codex. Podaj ścieżkę w ustawieniach",
   "codexPath": "Podaj pełną ścieżkę do pliku wykonywalnego Codex",
-  "codexRead": "Nie udało się pobrać limitów. Sprawdź sieć i logowanie do Codex"
+  "codexRead": "Nie udało się pobrać limitów. Sprawdź sieć i logowanie do Codex",
+  "colorAdvanced": "Zaawansowane",
+  "confirm": "Potwierdź",
+  "cut": "Wytnij",
+  "copy": "Kopiuj",
+  "paste": "Wklej",
+  "selectAll": "Zaznacz wszystko",
+  "undo": "Cofnij",
+  "redo": "Ponów"
 }

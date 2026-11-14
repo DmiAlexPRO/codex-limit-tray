@@ -1,6 +1,5 @@
 {
   "language": "语言",
-  "restart": "请重启 Codex Limit Tray 以应用新语言。",
   "ok": "确定",
   "appearance": "外观",
   "connection": "连接",
@@ -24,7 +23,6 @@
   "openTaskbarSettings": "打开任务栏设置",
   "openTaskbarSettingsError": "无法打开设置。右键单击任务栏，然后选择「任务栏设置」。",
   "menuBarIconHelp": "应用运行时，图标会显示在菜单栏中。如果 macOS 26 或更新版本隐藏了图标，请检查「系统设置 → 菜单栏 → 允许在菜单栏中显示」。",
-  "choose": "选择…",
   "chooseColor": "选择指示器颜色",
   "autosave": "更改会自动保存。登录时，应用在系统托盘中启动。",
   "preview": "图标示例：57 / 82。不是账户数据。",
@@ -104,5 +102,13 @@
   "version": "服务器响应不兼容，请更新 Codex",
   "codexMissing": "未找到 Codex。请在设置中指定路径",
   "codexPath": "请指定 Codex 可执行文件的完整路径",
-  "codexRead": "无法获取限额。请检查网络及 Codex 登录状态"
+  "codexRead": "无法获取限额。请检查网络及 Codex 登录状态",
+  "colorAdvanced": "高级",
+  "confirm": "确认",
+  "cut": "剪切",
+  "copy": "复制",
+  "paste": "粘贴",
+  "selectAll": "全选",
+  "undo": "撤销",
+  "redo": "重做"
 }

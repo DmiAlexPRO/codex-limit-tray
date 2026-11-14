@@ -1,6 +1,5 @@
 {
   "language": "Sprache",
-  "restart": "Starten Sie Codex Limit Tray neu, um die Sprache zu übernehmen.",
   "ok": "OK",
   "appearance": "Darstellung",
   "connection": "Verbindung",
@@ -24,7 +23,6 @@
   "openTaskbarSettings": "Taskleisteneinstellungen öffnen",
   "openTaskbarSettingsError": "Die Einstellungen konnten nicht geöffnet werden. Klicke mit der rechten Maustaste auf die Taskleiste und wähle Taskleisteneinstellungen.",
   "menuBarIconHelp": "Das Symbol ist in der Menüleiste zu sehen, solange die App läuft. Falls es ab macOS 26 ausgeblendet ist, prüfe Systemeinstellungen → Menüleiste.",
-  "choose": "Auswählen…",
   "chooseColor": "Wählen Sie eine Farbe für die Anzeige",
   "autosave": "Änderungen werden automatisch gespeichert. Beim Anmelden startet die App im Infobereich.",
   "preview": "Beispielsymbol: 57 / 82. Keine Kontodaten.",
@@ -104,5 +102,13 @@
   "version": "Aktualisieren Sie Codex: inkompatible Serverantwort",
   "codexMissing": "Codex nicht gefunden. Geben Sie den Pfad in den Einstellungen an",
   "codexPath": "Geben Sie den vollständigen Pfad zur ausführbaren Codex-Datei an",
-  "codexRead": "Limits konnten nicht abgerufen werden. Prüfen Sie Netzwerk und Codex-Anmeldung"
+  "codexRead": "Limits konnten nicht abgerufen werden. Prüfen Sie Netzwerk und Codex-Anmeldung",
+  "colorAdvanced": "Erweitert",
+  "confirm": "Bestätigen",
+  "cut": "Ausschneiden",
+  "copy": "Kopieren",
+  "paste": "Einfügen",
+  "selectAll": "Alles auswählen",
+  "undo": "Rückgängig",
+  "redo": "Wiederholen"
 }

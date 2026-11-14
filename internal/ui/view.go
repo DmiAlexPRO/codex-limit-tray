@@ -49,6 +49,7 @@ type View struct {
 func NewView(a fyne.App, w fyne.Window, s settings.Settings, refresh, exit func(), save func(settings.Settings) error) *View {
 	tr := func(key string) string { return i18n.Text(s.Language, key) }
 	v := &View{app: a, window: w, settings: s, language: s.Language, status: tr("waiting"), refresh: refresh, save: save}
+	setWidgetLanguage(s.Language)
 	a.Settings().SetTheme(appTheme{s})
 	v.resets = newResetPanel(w, v.language)
 	v.dashboard = container.NewStack(dashboard(nil, v.status, s, v.resets))
@@ -164,7 +165,7 @@ func dashboard(windows []quota.Window, status string, s settings.Settings, reset
 	tr := func(key string) string { return i18n.Text(s.Language, key) }
 	items := container.NewVBox(
 		text(tr("limits"), 26, true),
-		muted(tr("remaining")),
+		wrapped(tr("remaining")),
 	)
 	if len(windows) == 0 {
 		items.Add(surface(container.NewVBox(text(tr("noData"), 15, true), wrapped(tr("noDataHint")))))
@@ -173,7 +174,7 @@ func dashboard(windows []quota.Window, status string, s settings.Settings, reset
 		items.Add(QuotaCard(w, index, s))
 	}
 	items.Add(resets.body)
-	scroll := container.NewVScroll(items)
+	scroll := scrollPage(items)
 	resets.relayout = func() {
 		scroll.Refresh()
 		items.Refresh()
@@ -194,7 +195,7 @@ func QuotaCard(w quota.Window, index int, s settings.Settings) fyne.CanvasObject
 	marker.SetMinSize(fyne.NewSize(8, 8))
 	title := container.NewHBox(container.NewCenter(marker), text(quotaTitle(w, s.Language), 14, true))
 	line := container.NewBorder(nil, nil, title, value, layout.NewSpacer())
-	return surface(container.NewVBox(line, progress, muted(reset)))
+	return surface(container.NewVBox(line, progress, wrapped(reset)))
 }
 
 func (v *View) ShowWidget() {
@@ -284,7 +285,7 @@ func (v *View) preferences() fyne.CanvasObject {
 	colorButton := func(title string, value *string) fyne.CanvasObject {
 		swatch := canvas.NewRectangle(hex(*value))
 		swatch.SetMinSize(fyne.NewSize(24, 24))
-		button := widget.NewButton(tr("choose"), func() {
+		button := widget.NewButton(title+"…", func() {
 			picker := dialog.NewColorPicker(title, tr("chooseColor"), func(c color.Color) {
 				if c == nil {
 					return
@@ -317,16 +318,16 @@ func (v *View) preferences() fyne.CanvasObject {
 		widget.NewFormItem(tr("language"), language),
 		widget.NewFormItem(tr("theme"), themeSelect),
 		widget.NewFormItem(tr("icon"), style),
-		widget.NewFormItem(tr("accent"), colorButton(tr("accent"), &accentValue)),
-		widget.NewFormItem(tr("lowColor"), colorButton(tr("lowColor"), &lowValue)),
 		widget.NewFormItem(tr("threshold"), container.NewBorder(nil, nil, nil, thresholdValue, threshold)),
 	)
 	note := wrapped(tr("autosave"))
-	content := container.NewVBox(text(tr("settings"), 24, true), form, enabled, sound, autoStart, note, container.NewHBox(preview, wrapped(tr("preview"))))
+	content := container.NewVBox(text(tr("settings"), 24, true), form,
+		colorButton(tr("accent"), &accentValue), colorButton(tr("lowColor"), &lowValue),
+		enabled, sound, autoStart, note, container.NewBorder(nil, nil, preview, nil, wrapped(tr("preview"))))
 	for _, item := range v.trayVisibilityHelp(runtime.GOOS) {
 		content.Add(item)
 	}
-	return container.NewVScroll(content)
+	return scrollPage(content)
 }
 
 func (v *View) trayVisibilityHelp(goos string) []fyne.CanvasObject {
@@ -375,6 +376,7 @@ func (v *View) languageSelector() *widget.Select {
 func (v *View) applyLanguage(next settings.Settings) {
 	v.settings = next
 	v.language = next.Language
+	setWidgetLanguage(v.language)
 	v.localizeStatus()
 	v.resets.language = next.Language
 	v.resets.button.SetText(v.tr("earnedResetUse"))
@@ -418,7 +420,12 @@ func (v *View) connection() fyne.CanvasObject {
 		v.refresh()
 	})
 	note := wrapped(tr("signin"))
-	return container.NewVScroll(container.NewVBox(text(tr("connection"), 24, true), note, path, apply, widget.NewSeparator(), v.diagnostic, widget.NewSeparator(), wrapped(tr("polling"))))
+	return scrollPage(container.NewVBox(text(tr("connection"), 24, true), note, path, apply, widget.NewSeparator(), v.diagnostic, widget.NewSeparator(), wrapped(tr("polling"))))
+}
+
+// Fyne draws the scrollbar over the content, so leave room for its expanded width.
+func scrollPage(content fyne.CanvasObject) *container.Scroll {
+	return container.NewVScroll(container.New(layout.NewCustomPaddedLayout(0, 0, 0, theme.ScrollBarSize()), content))
 }
 
 func text(value string, size float32, bold bool) *widget.RichText {
