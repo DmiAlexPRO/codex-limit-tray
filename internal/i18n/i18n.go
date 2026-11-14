@@ -30,6 +30,7 @@ func Languages() []Language {
 		{"sw", "Kiswahili"}, {"ha", "Hausa"},
 		{"be", "Беларуская"}, {"kk", "Қазақша"}, {"uk", "Українська"},
 		{"pl", "Polski"}, {"it", "Italiano"}, {"tr", "Türkçe"},
+		{"cs", "Čeština"}, {"ko", "한국어"},
 		{"ky", "Кыргызча"}, {"hy", "Հայերեն"},
 	}
 }

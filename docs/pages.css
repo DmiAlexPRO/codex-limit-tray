@@ -21,10 +21,14 @@ a:hover { text-decoration-thickness: .13em; }
 .wrap { width: min(70rem, calc(100% - clamp(2rem, 8vw, 7rem))); margin-inline: auto; }
 .site-header, .site-footer .wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem 1.5rem; }
 .site-header { padding-block: .75rem; }
-.brand, .languages a { display: inline-flex; gap: .65rem; align-items: center; min-height: 2.75rem; }
-.brand { color: var(--ink); font-weight: 750; text-decoration: none; }
-.languages { display: flex; gap: 1rem; }
-.languages [aria-current] { color: var(--ink); font-weight: 700; text-decoration: none; }
+.brand { display: inline-flex; gap: .65rem; align-items: center; min-height: 2.75rem; color: var(--ink); font-weight: 750; text-decoration: none; }
+.languages { position: relative; z-index: 1; margin-inline-start: auto; }
+.languages summary { min-height: 2.75rem; padding: .5rem .8rem; border: 1px solid var(--rule); border-radius: .45rem; cursor: pointer; }
+.languages ul { position: absolute; inset-inline-end: 0; min-width: 11rem; max-height: 65vh; overflow-y: auto; margin: .3rem 0 0; padding: .25rem; list-style: none; background: var(--paper); border: 1px solid var(--rule); border-radius: .5rem; box-shadow: 0 8px 20px #12252221; }
+.languages a { display: block; padding: .6rem .75rem; border-radius: .25rem; text-decoration: none; }
+.languages a:hover, .languages [aria-current] { background: var(--mint); }
+.languages a:focus-visible { outline-offset: -3px; }
+.languages [aria-current] { font-weight: 750; }
 
 .hero {
   border-block: 1px solid var(--rule);
@@ -32,7 +36,7 @@ a:hover { text-decoration-thickness: .13em; }
   padding-block: clamp(2.5rem, 5.8vw, 4.75rem);
 }
 .eyebrow { color: var(--accent); font-size: .8rem; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; }
-h1, h2 { line-height: 1.04; letter-spacing: -.04em; text-wrap: balance; }
+h1, h2 { line-height: 1.08; letter-spacing: -.035em; text-wrap: balance; overflow-wrap: anywhere; }
 h1 { font-size: clamp(2.5rem, 6vw, 5rem); max-width: 16ch; margin-block: .65rem 1rem; }
 .intro { max-width: 55ch; color: var(--muted); font-size: clamp(1.06rem, 2vw, 1.25rem); }
 .actions { display: flex; flex-wrap: wrap; align-items: center; gap: .55rem 1.25rem; margin-top: 1.45rem; }
@@ -61,7 +65,7 @@ h2 { font-size: clamp(2rem, 4vw, 3.2rem); margin-block: .55rem 1.65rem; }
 .site-footer p { max-width: 67ch; }
 
 @media (min-width: 65rem) {
-  .hero-layout { display: grid; grid-template-columns: .9fr 1.1fr; align-items: center; gap: 2.5rem; }
+  .hero-layout { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); align-items: center; gap: 2.5rem; }
   h1 { font-size: clamp(3.55rem, 5vw, 4.7rem); }
   .tray-preview { margin-top: 0; }
 }

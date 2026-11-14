@@ -41,7 +41,7 @@ func TestLanguageSelection(t *testing.T) {
 	v.ShowSettings()
 	w.Show()
 	control := findForm(v.settingsPage.Selected().Content).Items[0].Widget.(*widget.Select)
-	if control.Selected != "English" || len(control.Options) != 27 {
+	if control.Selected != "English" || len(control.Options) != len(i18n.Languages()) {
 		t.Fatal("incorrect initial language selector")
 	}
 	test.Tap(control)

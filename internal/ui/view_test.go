@@ -25,7 +25,7 @@ func TestRenderThemesAndScales(t *testing.T) {
 			s.Theme = mode
 			w := a.NewWindow("Test")
 			v := NewView(a, w, s, func() {}, func() {}, func(settings.Settings) error { return nil })
-			v.Update([]quota.Window{{Remaining: 82, Minutes: 300, Reset: time.Date(2026, 11, 5, 13, 18, 0, 0, time.UTC)}, {Remaining: 57, Minutes: 10080, Reset: time.Date(2026, 11, 5, 13, 18, 0, 0, time.UTC)}}, "Обновлено 18:41:49 · запрос каждые 30 с", "Fixture")
+			v.Update([]quota.Window{{Remaining: 82, Minutes: 300, Reset: time.Date(2026, 11, 5, 13, 18, 0, 0, time.UTC)}, {Remaining: 57, Minutes: 10080, Reset: time.Date(2026, 11, 5, 13, 18, 0, 0, time.UTC)}}, "Updated 18:41:49 · refreshes every 30 s", "Fixture")
 			c := w.Canvas().(software.WindowlessCanvas)
 			c.SetScale(scale)
 			w.Resize(fyne.NewSize(420, 600))
@@ -59,7 +59,7 @@ func TestRenderThemesAndScales(t *testing.T) {
 				}
 				f.Close()
 			}
-			v.Update(nil, "Нет данных", "Fixture")
+			v.Update(nil, "No data yet", "Fixture")
 			if len(v.windows) != 0 {
 				t.Fatal("stale values")
 			}
