@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Лимиты Codex в трее Windows | Codex Limit Tray</title>
+  <meta name="description" content="Как вывести остаток пятичасового и недельного лимитов Codex в трей Windows. Скачать Codex Limit Tray и настроить приложение за три шага.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Codex Limit Tray — лимиты Codex в трее Windows">
+  <meta property="og:image" content="https://dmialexpro.github.io/codex-limit-tray/images/tray-modes.png">
+  <link rel="canonical" href="https://dmialexpro.github.io/codex-limit-tray/ru/">
+  <link rel="alternate" hreflang="en" href="https://dmialexpro.github.io/codex-limit-tray/">
+  <link rel="alternate" hreflang="ru" href="https://dmialexpro.github.io/codex-limit-tray/ru/">
+  <link rel="alternate" hreflang="x-default" href="https://dmialexpro.github.io/codex-limit-tray/">
+  <link rel="icon" href="../tray.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../pages.css">
+</head>
+<body>
+  <header class="site-header wrap">
+    <a class="brand" href="./"><img src="../tray.svg" width="30" height="30" alt="">Codex Limit Tray</a>
+    <nav class="languages" aria-label="Язык">
+      <a href="../" lang="en" hreflang="en">English</a>
+      <a href="./" aria-current="page">Русский</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="wrap hero-layout">
+        <div>
+          <p class="eyebrow">Windows · Бесплатно, с открытым кодом</p>
+          <h1>Лимиты Codex в трее Windows</h1>
+          <p class="intro">Смотрите, сколько осталось от пятичасового и недельного лимитов Codex и когда они сбросятся. Значок можно закрепить рядом с часами, а компактный виджет оставить поверх окон.</p>
+          <div class="actions">
+            <a class="button" href="https://github.com/DmiAlexPRO/codex-limit-tray/releases/latest/download/CodexLimitTray-windows-x64-Setup.exe">Скачать для Windows <span aria-hidden="true">↓</span></a>
+            <a href="https://github.com/DmiAlexPRO/codex-limit-tray/releases">Переносная версия и другие выпуски</a>
+          </div>
+          <p class="requirement">Установщик для Windows x64 · Нужен установленный Codex со входом в аккаунт</p>
+        </div>
+
+        <figure class="tray-preview">
+          <a href="../images/tray-modes.png" aria-label="Открыть скриншот трея в полном размере">
+            <img src="../images/tray-modes.png" width="1840" height="680" fetchpriority="high" alt="Четыре стиля значка в трее: цифры, полосы, сегменты и кольца. На примере осталось 82% на пять часов и 57% на неделю.">
+          </a>
+          <figcaption>Варианты значка в трее на демонстрационных данных.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="setup wrap" aria-labelledby="setup-title">
+      <div>
+        <p class="eyebrow">Установка</p>
+        <h2 id="setup-title">Как вывести лимиты Codex в трей</h2>
+        <ol class="steps">
+          <li><strong>Войдите в Codex.</strong> Используйте Codex Desktop или выполните <code>codex login</code>. Отдельный аккаунт или ключ API для Codex Limit Tray не нужны.</li>
+          <li><strong>Запустите установщик.</strong> Приложение устанавливается для вашего пользователя Windows без прав администратора. Установщик не подписан, поэтому Windows SmartScreen может показать предупреждение. Скачивайте файл только из GitHub Releases этого проекта.</li>
+          <li><strong>Откройте Codex Limit Tray.</strong> Закройте окно, и приложение продолжит работать в трее. Нажмите на значок, чтобы посмотреть остаток и время сброса.</li>
+        </ol>
+        <aside class="tip">
+          <h3>Значок не виден?</h3>
+          <p>Откройте меню скрытых значков (↑) и перетащите значок приложения к часам. Чтобы он появлялся при входе в Windows, включите <strong>Оформление → Запускать при входе в систему</strong> в настройках приложения.</p>
+        </aside>
+      </div>
+      <figure class="app-preview">
+        <a href="../images/main-dark.png" aria-label="Открыть скриншот окна лимитов в полном размере">
+          <img src="../images/main-dark.png" width="420" height="600" loading="lazy" alt="Окно Codex Limit Tray в тёмной теме. Для каждого лимита показаны остаток в процентах и время сброса.">
+        </a>
+        <figcaption>Окно лимитов с демонстрационными данными.</figcaption>
+      </figure>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>Codex Limit Tray — независимый проект, не связанный с OpenAI. Он показывает лимиты подписки Codex, а не лимиты сообщений ChatGPT или расходы на API.</p>
+      <a href="https://github.com/DmiAlexPRO/codex-limit-tray">Исходный код на GitHub и лицензия MIT</a>
+    </div>
+  </footer>
+</body>
+</html>
