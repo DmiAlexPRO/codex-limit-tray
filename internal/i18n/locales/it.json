@@ -1,6 +1,5 @@
 {
   "language": "Lingua",
-  "restart": "Riavvia Codex Limit Tray per applicare la nuova lingua.",
   "ok": "OK",
   "appearance": "Aspetto",
   "connection": "Connessione",
@@ -24,7 +23,6 @@
   "openTaskbarSettings": "Apri le impostazioni della barra delle applicazioni",
   "openTaskbarSettingsError": "Impossibile aprire le impostazioni. Fai clic con il tasto destro sulla barra delle applicazioni e seleziona Impostazioni della barra delle applicazioni.",
   "menuBarIconHelp": "L’icona compare nella barra dei menu mentre l’app è in esecuzione. Se è nascosta in macOS 26 o successivo, controlla Impostazioni di Sistema → Barra dei menu.",
-  "choose": "Scegli…",
   "chooseColor": "Scegli il colore dell’indicatore",
   "autosave": "Le modifiche si salvano automaticamente. All’accesso l’app si apre nell’area di notifica.",
   "preview": "Icona di esempio: 57 / 82. Non sono dati del tuo account.",
@@ -104,5 +102,13 @@
   "version": "Aggiorna Codex: risposta del server incompatibile",
   "codexMissing": "Codex non trovato. Indica il percorso nelle impostazioni",
   "codexPath": "Indica il percorso completo dell’eseguibile di Codex",
-  "codexRead": "Impossibile ottenere i limiti. Controlla la rete e l’accesso a Codex"
+  "codexRead": "Impossibile ottenere i limiti. Controlla la rete e l’accesso a Codex",
+  "colorAdvanced": "Avanzate",
+  "confirm": "Conferma",
+  "cut": "Taglia",
+  "copy": "Copia",
+  "paste": "Incolla",
+  "selectAll": "Seleziona tutto",
+  "undo": "Annulla",
+  "redo": "Ripeti"
 }

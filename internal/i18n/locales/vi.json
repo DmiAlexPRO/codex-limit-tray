@@ -1,6 +1,5 @@
 {
   "language": "Ngôn ngữ",
-  "restart": "Khởi động lại Codex Limit Tray để áp dụng ngôn ngữ mới.",
   "ok": "OK",
   "appearance": "Giao diện",
   "connection": "Kết nối",
@@ -24,7 +23,6 @@
   "openTaskbarSettings": "Mở cài đặt thanh tác vụ",
   "openTaskbarSettingsError": "Không mở được phần cài đặt. Nhấp chuột phải vào thanh tác vụ rồi chọn Cài đặt thanh tác vụ.",
   "menuBarIconHelp": "Biểu tượng xuất hiện trên thanh menu khi ứng dụng đang chạy. Nếu biểu tượng bị ẩn trên macOS 26 trở lên, hãy kiểm tra Cài đặt hệ thống → Thanh menu.",
-  "choose": "Chọn…",
   "chooseColor": "Chọn màu chỉ báo",
   "autosave": "Thay đổi được tự động lưu. Khi đăng nhập, ứng dụng mở trong khay hệ thống.",
   "preview": "Biểu tượng mẫu: 57 / 82. Không phải dữ liệu tài khoản.",
@@ -104,5 +102,13 @@
   "version": "Cập nhật Codex: phản hồi máy chủ không tương thích",
   "codexMissing": "Không tìm thấy Codex. Chỉ định đường dẫn trong Cài đặt",
   "codexPath": "Nhập đường dẫn đầy đủ tới tệp thực thi Codex",
-  "codexRead": "Không lấy được hạn mức. Kiểm tra mạng và đăng nhập Codex"
+  "codexRead": "Không lấy được hạn mức. Kiểm tra mạng và đăng nhập Codex",
+  "colorAdvanced": "Nâng cao",
+  "confirm": "Xác nhận",
+  "cut": "Cắt",
+  "copy": "Sao chép",
+  "paste": "Dán",
+  "selectAll": "Chọn tất cả",
+  "undo": "Hoàn tác",
+  "redo": "Làm lại"
 }

@@ -40,6 +40,7 @@ func newResetPanel(w fyne.Window, language string) *resetPanel {
 			return
 		}
 		p.confirming = true
+		language := p.language
 		dialog := dialog.NewCustomConfirm(
 			i18n.Text(language, "earnedResetUse"), i18n.Text(language, "earnedResetConfirm"), i18n.Text(language, "earnedResetCancel"),
 			wrapped(i18n.Text(language, "earnedResetPrompt")), func(confirmed bool) {

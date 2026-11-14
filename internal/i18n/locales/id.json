@@ -1,6 +1,5 @@
 {
   "language": "Bahasa",
-  "restart": "Mulai ulang Codex Limit Tray untuk menerapkan bahasa baru.",
   "ok": "OK",
   "appearance": "Tampilan",
   "connection": "Koneksi",
@@ -24,7 +23,6 @@
   "openTaskbarSettings": "Buka pengaturan taskbar",
   "openTaskbarSettingsError": "Pengaturan tidak dapat dibuka. Klik kanan taskbar, lalu pilih Pengaturan taskbar.",
   "menuBarIconHelp": "Ikon muncul di bar menu selama aplikasi berjalan. Jika tersembunyi di macOS 26 atau lebih baru, periksa Pengaturan Sistem → Bar Menu.",
-  "choose": "Pilih…",
   "chooseColor": "Pilih warna indikator",
   "autosave": "Perubahan disimpan otomatis. Saat masuk, aplikasi terbuka di baki sistem.",
   "preview": "Contoh ikon: 57 / 82. Bukan data akun.",
@@ -104,5 +102,13 @@
   "version": "Perbarui Codex: respons server tidak kompatibel",
   "codexMissing": "Codex tidak ditemukan. Atur lokasinya di Pengaturan",
   "codexPath": "Masukkan lokasi lengkap file program Codex",
-  "codexRead": "Gagal mengambil batas. Periksa jaringan dan sesi Codex"
+  "codexRead": "Gagal mengambil batas. Periksa jaringan dan sesi Codex",
+  "colorAdvanced": "Lanjutan",
+  "confirm": "Konfirmasi",
+  "cut": "Potong",
+  "copy": "Salin",
+  "paste": "Tempel",
+  "selectAll": "Pilih semua",
+  "undo": "Urungkan",
+  "redo": "Ulangi"
 }

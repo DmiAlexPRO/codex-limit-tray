@@ -31,8 +31,26 @@ func TestCatalogs(t *testing.T) {
 				if strings.TrimSpace(value) == "" || !utf8.ValidString(value) {
 					t.Errorf("missing or invalid translation: %s", key)
 				}
-				if !reflect.DeepEqual(format.FindAllString(value, -1), format.FindAllString(english, -1)) {
+				if strings.ContainsAny(value, "\uFFFD\uFEFF") {
+					t.Errorf("unexpected replacement character or BOM: %s", key)
+				}
+				specifiers := format.FindAllString(english, -1)
+				if !reflect.DeepEqual(format.FindAllString(value, -1), specifiers) {
 					t.Errorf("format mismatch: %s = %q", key, value)
+				}
+				args := make([]any, 0, len(specifiers))
+				for _, specifier := range specifiers {
+					switch specifier[len(specifier)-1] {
+					case 'd':
+						args = append(args, 17)
+					case 'f':
+						args = append(args, 17.0)
+					case 's':
+						args = append(args, "14:25")
+					}
+				}
+				if strings.Contains(Text(language.Code, key, args...), "%!") {
+					t.Errorf("format error at runtime: %s = %q", key, value)
 				}
 			}
 		})

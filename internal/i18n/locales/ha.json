@@ -1,6 +1,5 @@
 {
   "language": "Harshe",
-  "restart": "Sake kunna Codex Limit Tray don amfani da sabon harshe.",
   "ok": "To",
   "appearance": "Kamanni",
   "connection": "Haɗi",
@@ -24,7 +23,6 @@
   "openTaskbarSettings": "Buɗe saitunan sandar aiki",
   "openTaskbarSettingsError": "An kasa buɗe saituna. Danna sandar aiki da maɓallin dama sannan ka zaɓi saitunan sandar aiki.",
   "menuBarIconHelp": "Alamar tana bayyana a sandar menu yayin da manhajar ke aiki. Idan an ɓoye ta a macOS 26 ko sabo, duba Saitunan Tsari → Sandar Menu.",
-  "choose": "Zaɓi…",
   "chooseColor": "Zaɓi launin alamar",
   "autosave": "Ana adana canje-canje kai tsaye. Lokacin shiga, manhajar tana buɗewa a yankin sanarwa.",
   "preview": "Misalin alama: 57 / 82. Ba bayanan asusunka ba ne.",
@@ -104,5 +102,13 @@
   "version": "Sabunta Codex: amsar uwar garke ba ta dace ba",
   "codexMissing": "Ba a sami Codex ba. Saita hanyarsa a Saituna",
   "codexPath": "Saka cikakkiyar hanyar fayil ɗin Codex",
-  "codexRead": "An kasa samun iyakoki. Duba haɗin intanet da zaman Codex"
+  "codexRead": "An kasa samun iyakoki. Duba haɗin intanet da zaman Codex",
+  "colorAdvanced": "Zaɓuɓɓuka na ci gaba",
+  "confirm": "Tabbatar",
+  "cut": "Yanke",
+  "copy": "Kwafa",
+  "paste": "Manna",
+  "selectAll": "Zaɓi duka",
+  "undo": "Soke canji",
+  "redo": "Maimaita canji"
 }

@@ -1,6 +1,5 @@
 {
   "language": "Lugha",
-  "restart": "Anzisha tena Codex Limit Tray ili kutumia lugha mpya.",
   "ok": "Sawa",
   "appearance": "Mwonekano",
   "connection": "Muunganisho",
@@ -24,7 +23,6 @@
   "openTaskbarSettings": "Fungua mipangilio ya upau wa kazi",
   "openTaskbarSettingsError": "Mipangilio haikufunguka. Bofya kulia kwenye upau wa kazi na uchague mipangilio ya upau wa kazi.",
   "menuBarIconHelp": "Aikoni inaonekana kwenye upau wa menyu programu inapokuwa wazi. Ikiwa imefichwa kwenye macOS 26 au mpya zaidi, angalia Mipangilio ya Mfumo → Upau wa Menyu.",
-  "choose": "Chagua…",
   "chooseColor": "Chagua rangi ya kiashirio",
   "autosave": "Mabadiliko huhifadhiwa kiotomatiki. Ukiingia, programu hufunguka kwenye trei ya mfumo.",
   "preview": "Mfano wa aikoni: 57 / 82. Hizi si data za akaunti.",
@@ -104,5 +102,13 @@
   "version": "Sasisha Codex: jibu la seva halioani",
   "codexMissing": "Codex haikupatikana. Weka njia yake kwenye Mipangilio",
   "codexPath": "Weka njia kamili ya faili inayotekeleza Codex",
-  "codexRead": "Imeshindwa kupata vikomo. Kagua mtandao na kipindi chako cha Codex"
+  "codexRead": "Imeshindwa kupata vikomo. Kagua mtandao na kipindi chako cha Codex",
+  "colorAdvanced": "Chaguo za kina",
+  "confirm": "Thibitisha",
+  "cut": "Kata",
+  "copy": "Nakili",
+  "paste": "Bandika",
+  "selectAll": "Chagua zote",
+  "undo": "Tendua",
+  "redo": "Rudia"
 }

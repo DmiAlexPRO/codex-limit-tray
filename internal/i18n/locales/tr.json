@@ -1,6 +1,5 @@
 {
   "language": "Dil",
-  "restart": "Yeni dili uygulamak için Codex Limit Tray’i yeniden başlatın.",
   "ok": "Tamam",
   "appearance": "Görünüm",
   "connection": "Bağlantı",
@@ -24,7 +23,6 @@
   "openTaskbarSettings": "Görev çubuğu ayarlarını aç",
   "openTaskbarSettingsError": "Ayarlar açılamadı. Görev çubuğuna sağ tıklayın ve Görev çubuğu ayarları’nı seçin.",
   "menuBarIconHelp": "Uygulama çalışırken simge menü çubuğunda görünür. macOS 26 veya sonraki bir sürümde gizliyse Sistem Ayarları → Menü Çubuğu bölümünü kontrol edin.",
-  "choose": "Seç…",
   "chooseColor": "Gösterge rengini seçin",
   "autosave": "Değişiklikler otomatik kaydedilir. Oturum açtığınızda uygulama sistem tepsisinde açılır.",
   "preview": "Örnek simge: 57 / 82. Hesap verisi değildir.",
@@ -104,5 +102,13 @@
   "version": "Codex’i güncelleyin: sunucu yanıtı uyumsuz",
   "codexMissing": "Codex bulunamadı. Ayarlar’da yolunu belirtin",
   "codexPath": "Codex çalıştırılabilir dosyasının tam yolunu belirtin",
-  "codexRead": "Limitler alınamadı. Ağı ve Codex oturumunuzu denetleyin"
+  "codexRead": "Limitler alınamadı. Ağı ve Codex oturumunuzu denetleyin",
+  "colorAdvanced": "Gelişmiş",
+  "confirm": "Onayla",
+  "cut": "Kes",
+  "copy": "Kopyala",
+  "paste": "Yapıştır",
+  "selectAll": "Tümünü seç",
+  "undo": "Geri al",
+  "redo": "Yinele"
 }

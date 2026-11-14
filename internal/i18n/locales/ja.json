@@ -1,6 +1,5 @@
 {
   "language": "言語",
-  "restart": "新しい言語を適用するには Codex Limit Tray を再起動してください。",
   "ok": "OK",
   "appearance": "外観",
   "connection": "接続",
@@ -24,7 +23,6 @@
   "openTaskbarSettings": "タスク バーの設定を開く",
   "openTaskbarSettingsError": "設定を開けませんでした。タスク バーを右クリックし、「タスク バーの設定」を選択してください。",
   "menuBarIconHelp": "アプリの起動中はアイコンがメニューバーに表示されます。macOS 26 以降で非表示の場合は「システム設定 → メニューバー」を確認してください。",
-  "choose": "選択…",
   "chooseColor": "インジケーターの色を選択",
   "autosave": "変更は自動で保存されます。ログイン時はトレイに起動します。",
   "preview": "アイコンの例：57 / 82。アカウントのデータではありません。",
@@ -104,5 +102,13 @@
   "version": "サーバーの応答に互換性がありません。Codex を更新してください",
   "codexMissing": "Codex が見つかりません。設定でパスを指定してください",
   "codexPath": "Codex 実行ファイルの完全なパスを指定してください",
-  "codexRead": "残量を取得できません。ネットワークと Codex のログイン状態を確認してください"
+  "codexRead": "残量を取得できません。ネットワークと Codex のログイン状態を確認してください",
+  "colorAdvanced": "詳細設定",
+  "confirm": "確定",
+  "cut": "切り取り",
+  "copy": "コピー",
+  "paste": "貼り付け",
+  "selectAll": "すべて選択",
+  "undo": "元に戻す",
+  "redo": "やり直す"
 }

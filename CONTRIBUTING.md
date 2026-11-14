@@ -4,7 +4,7 @@ Bug reports and focused pull requests are welcome. By contributing, you agree th
 
 ## Development setup
 
-Use Go 1.26+, Fyne 2.8.2 and CGO. Windows requires GCC/MinGW; macOS requires Xcode Command Line Tools. Do not commit `.tools`, `.cache`, `dist`, editor state or local design assets.
+Use Go 1.27.4+, Fyne 2.8.2 and CGO. Windows requires GCC/MinGW; macOS requires Xcode Command Line Tools. Do not commit `.tools`, `.cache`, `dist`, editor state or local design assets.
 
 Before submitting:
 
